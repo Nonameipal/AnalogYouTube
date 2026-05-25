@@ -3,7 +3,7 @@ package redis
 import (
 	"fmt"
 
-	"github.com/Nonameipal/P2P/internal/configs"
+	"github.com/Nonameipal/AnalogYouTube/internal/configs"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -1,0 +1,19 @@
+{
+  "auth_params": {
+    "access_token_ttl_minutes": 5,
+    "refresh_token_ttl_days": 30
+  },
+  "app_params": {
+    "gin_mode": "debug",
+    "port_run": "6666",
+    "server_url": "localhost",
+    "server_name": "GlobalServer"
+  },
+  "postgres_params": {
+    "host": "localhost",
+    "port": "5432",
+    "user": "postgres",
+    "password": "Noname0212",
+    "database": "AnalogYoutube"
+  }
+}
