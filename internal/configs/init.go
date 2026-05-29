@@ -3,35 +3,58 @@ package configs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
-	"log"
 	"os"
+
+	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
+	"github.com/joho/godotenv"
 )
 
 var AppSettings Configs
 
 func ReadSettings() error {
-	fmt.Println("Starting reading settings file")
+	logger := appLogger.GetLogger()
+	logger.Info().Msg("starting reading settings file")
 
-	if err := godotenv.Load(".env"); err != nil {
-		return fmt.Errorf("oшибка загрузки .env файла: %w", err)
-	}
+	_ = godotenv.Load(".env")
 
 	configFile, err := os.Open("internal/configs/configs.json")
 	if err != nil {
-		return fmt.Errorf("Couldn't open config file. Error is: %w", err)
+		return fmt.Errorf("couldn't open config file: %w", err)
 	}
 
 	defer func(configFile *os.File) {
-		err = configFile.Close()
-		if err != nil {
-			log.Fatal("Couldn't close config file. Error is: ", err.Error())
+		if closeErr := configFile.Close(); closeErr != nil {
+			logger.Error().Err(closeErr).Msg("couldn't close config file")
 		}
 	}(configFile)
 
-	fmt.Println("Starting decoding settings file")
+	logger.Info().Msg("starting decoding settings file")
 	if err = json.NewDecoder(configFile).Decode(&AppSettings); err != nil {
-		return fmt.Errorf("Couldn't decode settings json file. Error is: %w", err)
+		return fmt.Errorf("couldn't decode settings json file: %w", err)
+	}
+
+	// Environment variables have priority over configs.json.
+	if value := os.Getenv("JWT_SECRET"); value != "" {
+		AppSettings.AuthParams.JwtSecret = value
+	}
+	if value := os.Getenv("POSTGRES_HOST"); value != "" {
+		AppSettings.PostgresParams.Host = value
+	}
+	if value := os.Getenv("POSTGRES_PORT"); value != "" {
+		AppSettings.PostgresParams.Port = value
+	}
+	if value := os.Getenv("POSTGRES_USER"); value != "" {
+		AppSettings.PostgresParams.User = value
+	}
+	if value := os.Getenv("POSTGRES_PASSWORD"); value != "" {
+		AppSettings.PostgresParams.Password = value
+	}
+	if value := os.Getenv("POSTGRES_DATABASE"); value != "" {
+		AppSettings.PostgresParams.Database = value
+	}
+
+	if AppSettings.AuthParams.JwtSecret == "" {
+		return fmt.Errorf("jwt_secret is empty: set auth_params.jwt_secret in configs.json or JWT_SECRET in .env")
 	}
 
 	return nil

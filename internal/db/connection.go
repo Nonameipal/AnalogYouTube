@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/configs"
+	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
-
 
 func InitConnection() (*sqlx.DB, error) {
 	connectionConfigs := configs.AppSettings.PostgresParams
@@ -17,20 +17,27 @@ func InitConnection() (*sqlx.DB, error) {
 		connectionConfigs.Host,
 		connectionConfigs.Port,
 		connectionConfigs.Database)
-	fmt.Println("DEBUG Connection String:", connStr)
+
+	appLogger.GetLogger().Debug().
+		Str("host", connectionConfigs.Host).
+		Str("port", connectionConfigs.Port).
+		Str("database", connectionConfigs.Database).
+		Str("user", connectionConfigs.User).
+		Msg("connecting to postgres")
+
 	dbConn, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
 
+	appLogger.GetLogger().Info().Msg("postgres connection established")
 	return dbConn, nil
 }
 
 func CloseConnection(db *sqlx.DB) error {
-	err := db.Close()
-	if err != nil {
-		return err
+	if db == nil {
+		return nil
 	}
 
-	return nil
+	return db.Close()
 }

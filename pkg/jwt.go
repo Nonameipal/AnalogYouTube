@@ -2,9 +2,9 @@ package pkg
 
 import (
 	"fmt"
-	"os"
 	"time"
 
+	"github.com/Nonameipal/AnalogYouTube/internal/configs"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -15,22 +15,22 @@ type CustomClaims struct {
 	IsRefresh bool   `json:"is_refresh"`
 }
 
-func GenerateToken(userID int, ttl int, Role string, isRefresh bool) (string, error) {
+func GenerateToken(userID int, ttl int, role string, isRefresh bool) (string, error) {
 	claims := CustomClaims{
 		StandardClaims: jwt.StandardClaims{},
 		UserID:         userID,
 		IsRefresh:      isRefresh,
-		Role:           Role,
+		Role:           role,
 	}
 
 	if isRefresh {
-		claims.StandardClaims.ExpiresAt = int64(time.Duration(ttl) * 24 * time.Hour)
+		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(ttl) * 24 * time.Hour).Unix()
 	} else {
-		claims.StandardClaims.ExpiresAt = int64(time.Duration(ttl) * time.Minute)
+		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(ttl) * time.Minute).Unix()
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	return token.SignedString([]byte(configs.AppSettings.AuthParams.JwtSecret))
 }
 
 func ParseToken(tokenString string) (int, bool, string, error) {
@@ -38,15 +38,16 @@ func ParseToken(tokenString string) (int, bool, string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(configs.AppSettings.AuthParams.JwtSecret), nil
 	})
 	if err != nil {
 		return 0, false, "", err
 	}
 
-	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
-		return claims.UserID, claims.IsRefresh, claims.Role, nil
+	claims, ok := token.Claims.(*CustomClaims)
+	if !ok || !token.Valid {
+		return 0, false, "", fmt.Errorf("invalid token")
 	}
 
-	return 0, false, "", fmt.Errorf("invalid token")
+	return claims.UserID, claims.IsRefresh, claims.Role, nil
 }
