@@ -25,12 +25,19 @@ func (ctrl *Controller) InitRoutes() error {
 	{
 		apiV1.HandleFunc("/register", ctrl.SignUp).Methods(http.MethodPost)
 		apiV1.HandleFunc("/login", ctrl.SignIn).Methods(http.MethodPost)
+
+		apiV1.HandleFunc("/videos", ctrl.GetAllVideos).Methods(http.MethodGet)
+		apiV1.HandleFunc("/videos/{id}", ctrl.GetVideoByID).Methods(http.MethodGet)
 	}
 
 	authApiV1 := apiV1.PathPrefix("").Subrouter()
 	authApiV1.Use(ctrl.checkUserAuthentication)
 	{
 		authApiV1.HandleFunc("/me", ctrl.Me).Methods(http.MethodGet)
+
+		authApiV1.HandleFunc("/videos", ctrl.CreateVideo).Methods(http.MethodPost)
+		authApiV1.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
+		authApiV1.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
 	}
 
 	addr := fmt.Sprintf(":%s", configs.AppSettings.AppParams.PortRun)

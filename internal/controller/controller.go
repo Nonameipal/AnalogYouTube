@@ -18,7 +18,7 @@ func NewController(svc contracts.ServiceI) *Controller {
 
 func (ctrl *Controller) handleError(w http.ResponseWriter, err error) {
 	switch {
-	case errors.Is(err, errs.ErrNotFound) || errors.Is(err, errs.ErrUserNotFound):
+	case errors.Is(err, errs.ErrNotFound) || errors.Is(err, errs.ErrUserNotFound) || errors.Is(err, errs.ErrVideoNotFound):
 		writeJSON(w, http.StatusNotFound, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrInvalidRequestBody) || errors.Is(err, errs.ErrInvalidFieldValue):
 		writeJSON(w, http.StatusBadRequest, CommonError{Error: err.Error()})

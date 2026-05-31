@@ -58,3 +58,8 @@ func getUserIDFromContext(r *http.Request) (int, bool) {
 	userID, ok := r.Context().Value(userIDContextKey).(int)
 	return userID, ok
 }
+
+func getUserRoleFromContext(r *http.Request) (string, bool) {
+	userRole, ok := r.Context().Value(userRoleContextKey).(string)
+	return userRole, ok
+}
