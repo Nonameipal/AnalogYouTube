@@ -45,6 +45,28 @@ func (r *Repository) GetAllVideos() ([]domain.Video, error) {
 	return videos, nil
 }
 
+func (r *Repository) GetRecommendedVideos() ([]domain.Video, error) {
+	var dbVideos []dbModels.Video
+	err := r.db.Select(&dbVideos, `
+		SELECT v.id, v.author_id, v.title, v.description, v.video_url, v.thumbnail_url, v.views, v.status, v.created_at, v.updated_at
+		FROM videos v
+		LEFT JOIN video_likes vl ON vl.video_id = v.id
+		WHERE v.status = $1
+		GROUP BY v.id
+		ORDER BY COUNT(vl.id) DESC, v.views DESC, v.created_at DESC
+		LIMIT 20`, domain.VideoStatusActive)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+
+	videos := make([]domain.Video, 0, len(dbVideos))
+	for _, video := range dbVideos {
+		videos = append(videos, video.ToDomain())
+	}
+
+	return videos, nil
+}
+
 func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 	var dbVideo dbModels.Video
 	if err := r.db.Get(&dbVideo, `
@@ -55,6 +77,26 @@ func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 	}
 
 	return dbVideo.ToDomain(), nil
+}
+
+func (r *Repository) IncrementVideoViews(id int) error {
+	result, err := r.db.Exec(`
+		UPDATE videos
+		SET views = views + 1, updated_at = CURRENT_TIMESTAMP
+		WHERE id = $1 AND status = $2`, id, domain.VideoStatusActive)
+	if err != nil {
+		return r.translateError(err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return r.translateError(err)
+	}
+	if rowsAffected == 0 {
+		return errs.ErrNotFound
+	}
+
+	return nil
 }
 
 func (r *Repository) UpdateVideo(video domain.Video) (domain.Video, error) {

@@ -27,7 +27,13 @@ func (ctrl *Controller) InitRoutes() error {
 		apiV1.HandleFunc("/login", ctrl.SignIn).Methods(http.MethodPost)
 
 		apiV1.HandleFunc("/videos", ctrl.GetAllVideos).Methods(http.MethodGet)
+		apiV1.HandleFunc("/videos/recommended", ctrl.GetRecommendedVideos).Methods(http.MethodGet)
 		apiV1.HandleFunc("/videos/{id}", ctrl.GetVideoByID).Methods(http.MethodGet)
+		apiV1.HandleFunc("/videos/{id}/likes/count", ctrl.GetVideoLikesCount).Methods(http.MethodGet)
+		apiV1.HandleFunc("/videos/{id}/comments", ctrl.GetVideoComments).Methods(http.MethodGet)
+
+		apiV1.HandleFunc("/users/{id}/subscribers/count", ctrl.GetSubscribersCount).Methods(http.MethodGet)
+		apiV1.HandleFunc("/users/{id}/subscriptions/count", ctrl.GetSubscriptionsCount).Methods(http.MethodGet)
 	}
 
 	authApiV1 := apiV1.PathPrefix("").Subrouter()
@@ -38,6 +44,18 @@ func (ctrl *Controller) InitRoutes() error {
 		authApiV1.HandleFunc("/videos", ctrl.CreateVideo).Methods(http.MethodPost)
 		authApiV1.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
 		authApiV1.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
+
+		authApiV1.HandleFunc("/videos/{id}/like", ctrl.LikeVideo).Methods(http.MethodPost)
+		authApiV1.HandleFunc("/videos/{id}/like", ctrl.UnlikeVideo).Methods(http.MethodDelete)
+		authApiV1.HandleFunc("/videos/{id}/liked", ctrl.IsVideoLikedByMe).Methods(http.MethodGet)
+
+		authApiV1.HandleFunc("/users/{id}/subscribe", ctrl.SubscribeToUser).Methods(http.MethodPost)
+		authApiV1.HandleFunc("/users/{id}/subscribe", ctrl.UnsubscribeFromUser).Methods(http.MethodDelete)
+		authApiV1.HandleFunc("/users/{id}/subscribed", ctrl.IsSubscribedByMe).Methods(http.MethodGet)
+
+		authApiV1.HandleFunc("/videos/{id}/comments", ctrl.CreateComment).Methods(http.MethodPost)
+		authApiV1.HandleFunc("/comments/{id}", ctrl.UpdateComment).Methods(http.MethodPut)
+		authApiV1.HandleFunc("/comments/{id}", ctrl.DeleteComment).Methods(http.MethodDelete)
 	}
 
 	addr := fmt.Sprintf(":%s", configs.AppSettings.AppParams.PortRun)

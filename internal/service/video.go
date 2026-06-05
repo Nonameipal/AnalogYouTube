@@ -28,6 +28,10 @@ func (s *Service) GetAllVideos() ([]domain.Video, error) {
 	return s.repository.GetAllVideos()
 }
 
+func (s *Service) GetRecommendedVideos() ([]domain.Video, error) {
+	return s.repository.GetRecommendedVideos()
+}
+
 func (s *Service) GetVideoByID(id int) (domain.Video, error) {
 	if id <= 0 {
 		return domain.Video{}, errs.ErrInvalidFieldValue
@@ -42,6 +46,21 @@ func (s *Service) GetVideoByID(id int) (domain.Video, error) {
 	}
 
 	return video, nil
+}
+
+func (s *Service) IncrementVideoViews(id int) error {
+	if id <= 0 {
+		return errs.ErrInvalidFieldValue
+	}
+
+	if err := s.repository.IncrementVideoViews(id); err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return errs.ErrVideoNotFound
+		}
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error) {

@@ -49,9 +49,24 @@ func (ctrl *Controller) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, videos)
 }
 
+func (ctrl *Controller) GetRecommendedVideos(w http.ResponseWriter, r *http.Request) {
+	videos, err := ctrl.service.GetRecommendedVideos()
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, videos)
+}
+
 func (ctrl *Controller) GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	videoID, err := getIDFromRequest(r, "id")
 	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	if err = ctrl.service.IncrementVideoViews(videoID); err != nil {
 		ctrl.handleError(w, err)
 		return
 	}

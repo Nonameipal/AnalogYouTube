@@ -10,7 +10,26 @@ type RepositoryI interface {
 
 	CreateVideo(video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
+	GetRecommendedVideos() ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
+	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
 	DeleteVideo(id int) error
+
+	LikeVideo(userID int, videoID int) error
+	UnlikeVideo(userID int, videoID int) error
+	GetVideoLikesCount(videoID int) (int, error)
+	IsVideoLikedByUser(userID int, videoID int) (bool, error)
+
+	SubscribeToUser(subscriberID int, authorID int) error
+	UnsubscribeFromUser(subscriberID int, authorID int) error
+	GetSubscribersCount(authorID int) (int, error)
+	GetSubscriptionsCount(subscriberID int) (int, error)
+	IsSubscribed(subscriberID int, authorID int) (bool, error)
+
+	CreateComment(comment domain.Comment) (domain.Comment, error)
+	GetVideoComments(videoID int) ([]domain.Comment, error)
+	GetCommentByID(commentID int) (domain.Comment, error)
+	UpdateComment(comment domain.Comment) (domain.Comment, error)
+	DeleteComment(commentID int) error
 }
