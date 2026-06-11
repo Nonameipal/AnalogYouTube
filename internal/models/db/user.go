@@ -9,7 +9,6 @@ import (
 
 type User struct {
 	ID        int            `db:"id"`
-	FullName  string         `db:"full_name"`
 	Username  string         `db:"username"`
 	Email     sql.NullString `db:"email"`
 	Password  string         `db:"password"`
@@ -22,8 +21,6 @@ type User struct {
 func (u User) ToDomain() domain.User {
 	return domain.User{
 		ID:        u.ID,
-		FullName:  u.FullName,
-		Username:  u.Username,
 		Email:     u.Email.String,
 		Password:  u.Password,
 		Role:      u.Role,

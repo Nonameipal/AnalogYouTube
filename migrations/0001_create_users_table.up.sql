@@ -1,7 +1,6 @@
 -- Active: 1752440061054@@127.0.0.1@5432@analogyoutube@public
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(150) UNIQUE,
     password TEXT NOT NULL,

@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	
 	logger := appLogger.GetLogger()
 
 	logger.Info().Msg("Starting AnalogYouTube service")

@@ -7,9 +7,8 @@ import (
 
 func (r *Repository) CreateUser(user domain.User) error {
 	_, err := r.db.Exec(`
-		INSERT INTO users (full_name, username, email, password, role, avatar_url)
-		VALUES ($1, $2, NULLIF($3, ''), $4, $5, NULLIF($6, ''))`,
-		user.FullName,
+		INSERT INTO users (username, email, password, role, avatar_url)
+		VALUES ($1, $2, NULLIF($3, ''), $4, NULLIF($5, ''))`,
 		user.Username,
 		user.Email,
 		user.Password,
@@ -26,7 +25,7 @@ func (r *Repository) CreateUser(user domain.User) error {
 func (r *Repository) GetUserByUsername(username string) (domain.User, error) {
 	var dbUser dbModels.User
 	if err := r.db.Get(&dbUser, `
-		SELECT id, full_name, username, email, password, role, avatar_url, created_at, updated_at
+		SELECT id, username, email, password, role, avatar_url, created_at, updated_at
 		FROM users
 		WHERE username = $1`, username); err != nil {
 		return domain.User{}, r.translateError(err)
@@ -38,7 +37,7 @@ func (r *Repository) GetUserByUsername(username string) (domain.User, error) {
 func (r *Repository) GetUserByEmail(email string) (domain.User, error) {
 	var dbUser dbModels.User
 	if err := r.db.Get(&dbUser, `
-		SELECT id, full_name, username, email, password, role, avatar_url, created_at, updated_at
+		SELECT id, username, email, password, role, avatar_url, created_at, updated_at
 		FROM users
 		WHERE email = $1`, email); err != nil {
 		return domain.User{}, r.translateError(err)
@@ -50,7 +49,7 @@ func (r *Repository) GetUserByEmail(email string) (domain.User, error) {
 func (r *Repository) GetUserByID(id int) (domain.User, error) {
 	var dbUser dbModels.User
 	if err := r.db.Get(&dbUser, `
-		SELECT id, full_name, username, email, password, role, avatar_url, created_at, updated_at
+		SELECT id, username, email, password, role, avatar_url, created_at, updated_at
 		FROM users
 		WHERE id = $1`, id); err != nil {
 		return domain.User{}, r.translateError(err)

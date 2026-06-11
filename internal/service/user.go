@@ -10,12 +10,11 @@ import (
 )
 
 func (s *Service) CreateUser(user domain.User) error {
-	user.FullName = strings.TrimSpace(user.FullName)
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
 	user.Password = strings.TrimSpace(user.Password)
 
-	if user.FullName == "" || user.Username == "" || user.Password == "" {
+	if user.Username == "" || user.Password == "" {
 		return errs.ErrInvalidFieldValue
 	}
 

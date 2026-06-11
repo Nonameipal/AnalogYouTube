@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/configs"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type CustomClaims struct {
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 	UserID    int    `json:"user_id"`
 	Role      string `json:"role"`
 	IsRefresh bool   `json:"is_refresh"`
@@ -17,16 +17,16 @@ type CustomClaims struct {
 
 func GenerateToken(userID int, ttl int, role string, isRefresh bool) (string, error) {
 	claims := CustomClaims{
-		StandardClaims: jwt.StandardClaims{},
+		RegisteredClaims: jwt.RegisteredClaims{},
 		UserID:         userID,
 		IsRefresh:      isRefresh,
 		Role:           role,
 	}
 
 	if isRefresh {
-		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(ttl) * 24 * time.Hour).Unix()
+		claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(ttl) * 24 * time.Hour))
 	} else {
-		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(ttl) * time.Minute).Unix()
+		claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(ttl) * time.Minute))
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

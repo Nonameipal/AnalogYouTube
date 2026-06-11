@@ -19,7 +19,6 @@ func (ctrl *Controller) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := ctrl.service.CreateUser(domain.User{
-		FullName: input.FullName,
 		Username: input.Username,
 		Email:    input.Email,
 		Password: input.Password,
