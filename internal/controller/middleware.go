@@ -12,7 +12,7 @@ import (
 type contextKey string
 
 const (
-	userIDContextKey   contextKey = "user_id"
+	userIDContextKey contextKey = "user_id"
 	userRoleContextKey contextKey = "user_role"
 )
 

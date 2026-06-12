@@ -25,9 +25,9 @@ func (ctrl *Controller) CreateDonation(w http.ResponseWriter, r *http.Request) {
 
 	donation, err := ctrl.service.CreateDonation(userID, domain.Donation{
 		ReceiverID: input.ReceiverID,
-		VideoID:    input.VideoID,
-		Amount:     input.Amount,
-		Message:    input.Message,
+		VideoID: input.VideoID,
+		Amount: input.Amount,
+		Message: input.Message,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)

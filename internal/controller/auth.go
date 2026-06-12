@@ -20,7 +20,7 @@ func (ctrl *Controller) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	err := ctrl.service.CreateUser(domain.User{
 		Username: input.Username,
-		Email:    input.Email,
+		Email: input.Email,
 		Password: input.Password,
 	})
 	if err != nil {
@@ -84,7 +84,7 @@ func (ctrl *Controller) RefreshTokenPair(w http.ResponseWriter, r *http.Request)
 	}
 
 	writeJSON(w, http.StatusOK, dto.TokenPairResponse{
-		AccessToken:  accessToken,
+		AccessToken: accessToken,
 		RefreshToken: refreshToken,
 	})
 }

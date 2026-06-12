@@ -26,11 +26,11 @@ func (ctrl *Controller) CreateVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	video, err := ctrl.service.CreateVideo(userID, domain.Video{
-		Title:        input.Title,
-		Description:  input.Description,
-		VideoURL:     input.VideoURL,
+		Title: input.Title,
+		Description: input.Description,
+		VideoURL: input.VideoURL,
 		ThumbnailURL: input.ThumbnailURL,
-		CategoryID:   input.CategoryID,
+		CategoryID: input.CategoryID,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)
@@ -107,12 +107,12 @@ func (ctrl *Controller) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	video, err := ctrl.service.UpdateVideo(userID, userRole, domain.Video{
-		ID:           videoID,
-		Title:        input.Title,
-		Description:  input.Description,
-		VideoURL:     input.VideoURL,
+		ID: videoID,
+		Title: input.Title,
+		Description: input.Description,
+		VideoURL: input.VideoURL,
 		ThumbnailURL: input.ThumbnailURL,
-		CategoryID:   input.CategoryID,
+		CategoryID: input.CategoryID,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)

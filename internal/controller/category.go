@@ -69,8 +69,8 @@ func (ctrl *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	category, err := ctrl.service.UpdateCategory(domain.Category{
-		ID:          categoryID,
-		Name:        input.Name,
+		ID: categoryID,
+		Name: input.Name,
 		Description: input.Description,
 	})
 	if err != nil {

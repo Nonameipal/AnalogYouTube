@@ -56,8 +56,8 @@ func (ctrl *Controller) UpdateMe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := ctrl.service.UpdateUserProfile(userID, domain.User{
-		Username:  input.Username,
-		Email:     input.Email,
+		Username: input.Username,
+		Email: input.Email,
 		AvatarURL: input.AvatarURL,
 	})
 	if err != nil {
