@@ -18,6 +18,10 @@ func (s *Service) CreateVideo(authorID int, video domain.Video) (domain.Video, e
 		return domain.Video{}, errs.ErrInvalidFieldValue
 	}
 
+	if err := s.ensureCategoryExists(video.CategoryID); err != nil {
+		return domain.Video{}, err
+	}
+
 	video.AuthorID = authorID
 	video.Status = domain.VideoStatusActive
 
@@ -46,6 +50,18 @@ func (s *Service) GetVideoByID(id int) (domain.Video, error) {
 	}
 
 	return video, nil
+}
+
+func (s *Service) GetUserVideos(userID int) ([]domain.Video, error) {
+	if userID <= 0 {
+		return nil, errs.ErrInvalidFieldValue
+	}
+
+	if _, err := s.GetUserByID(userID); err != nil {
+		return nil, err
+	}
+
+	return s.repository.GetVideosByAuthorID(userID)
 }
 
 func (s *Service) IncrementVideoViews(id int) error {
@@ -82,6 +98,10 @@ func (s *Service) UpdateVideo(userID int, userRole string, video domain.Video) (
 		return domain.Video{}, errs.ErrAccessDenied
 	}
 
+	if err := s.ensureCategoryExists(video.CategoryID); err != nil {
+		return domain.Video{}, err
+	}
+
 	return s.repository.UpdateVideo(video)
 }
 
@@ -103,6 +123,22 @@ func (s *Service) DeleteVideo(userID int, userRole string, videoID int) error {
 		if errors.Is(err, errs.ErrNotFound) {
 			return errs.ErrVideoNotFound
 		}
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) ensureCategoryExists(categoryID *int) error {
+	if categoryID == nil {
+		return nil
+	}
+
+	if *categoryID <= 0 {
+		return errs.ErrInvalidFieldValue
+	}
+
+	if _, err := s.GetCategoryByID(*categoryID); err != nil {
 		return err
 	}
 

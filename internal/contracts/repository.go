@@ -7,14 +7,27 @@ type RepositoryI interface {
 	GetUserByUsername(username string) (domain.User, error)
 	GetUserByEmail(email string) (domain.User, error)
 	GetUserByID(id int) (domain.User, error)
+	UpdateUserProfile(user domain.User) (domain.User, error)
 
 	CreateVideo(video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
+	GetVideosByAuthorID(authorID int) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
 	DeleteVideo(id int) error
+
+	CreateCategory(category domain.Category) (domain.Category, error)
+	GetAllCategories() ([]domain.Category, error)
+	GetCategoryByID(id int) (domain.Category, error)
+	UpdateCategory(category domain.Category) (domain.Category, error)
+	DeleteCategory(id int) error
+
+	CreateDonation(donation domain.Donation) (domain.Donation, error)
+	GetSentDonations(senderID int) ([]domain.Donation, error)
+	GetReceivedDonations(receiverID int) ([]domain.Donation, error)
+	GetUserDonations(userID int) ([]domain.Donation, error)
 
 	LikeVideo(userID int, videoID int) error
 	UnlikeVideo(userID int, videoID int) error

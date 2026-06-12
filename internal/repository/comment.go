@@ -8,8 +8,8 @@ import (
 
 func (r *Repository) CreateComment(comment domain.Comment) (domain.Comment, error) {
 	var dbComment dbModels.Comment
-	err := r.db.Get(&dbComment, `
-		INSERT INTO comments (user_id, video_id, text, status)
+	err := r.db.Get(&dbComment, 
+		`INSERT INTO comments (user_id, video_id, text, status)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, user_id, video_id, text, status, created_at, updated_at`,
 		comment.UserID,
@@ -26,8 +26,8 @@ func (r *Repository) CreateComment(comment domain.Comment) (domain.Comment, erro
 
 func (r *Repository) GetVideoComments(videoID int) ([]domain.Comment, error) {
 	var dbComments []dbModels.Comment
-	err := r.db.Select(&dbComments, `
-		SELECT id, user_id, video_id, text, status, created_at, updated_at
+	err := r.db.Select(&dbComments,
+		`SELECT id, user_id, video_id, text, status, created_at, updated_at
 		FROM comments
 		WHERE video_id = $1 AND status = $2
 		ORDER BY created_at DESC`, videoID, domain.CommentStatusActive)
@@ -45,8 +45,8 @@ func (r *Repository) GetVideoComments(videoID int) ([]domain.Comment, error) {
 
 func (r *Repository) GetCommentByID(commentID int) (domain.Comment, error) {
 	var dbComment dbModels.Comment
-	if err := r.db.Get(&dbComment, `
-		SELECT id, user_id, video_id, text, status, created_at, updated_at
+	if err := r.db.Get(&dbComment, 
+		`SELECT id, user_id, video_id, text, status, created_at, updated_at
 		FROM comments
 		WHERE id = $1 AND status = $2`, commentID, domain.CommentStatusActive); err != nil {
 		return domain.Comment{}, r.translateError(err)
@@ -57,8 +57,8 @@ func (r *Repository) GetCommentByID(commentID int) (domain.Comment, error) {
 
 func (r *Repository) UpdateComment(comment domain.Comment) (domain.Comment, error) {
 	var dbComment dbModels.Comment
-	err := r.db.Get(&dbComment, `
-		UPDATE comments
+	err := r.db.Get(&dbComment, 
+		`UPDATE comments
 		SET text = $1, updated_at = CURRENT_TIMESTAMP
 		WHERE id = $2 AND status = $3
 		RETURNING id, user_id, video_id, text, status, created_at, updated_at`,
@@ -74,8 +74,8 @@ func (r *Repository) UpdateComment(comment domain.Comment) (domain.Comment, erro
 }
 
 func (r *Repository) DeleteComment(commentID int) error {
-	result, err := r.db.Exec(`
-		UPDATE comments
+	result, err := r.db.Exec(
+		`UPDATE comments
 		SET status = $1, updated_at = CURRENT_TIMESTAMP
 		WHERE id = $2 AND status = $3`, domain.CommentStatusDeleted, commentID, domain.CommentStatusActive)
 	if err != nil {

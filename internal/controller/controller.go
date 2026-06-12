@@ -21,11 +21,13 @@ func (ctrl *Controller) handleError(w http.ResponseWriter, err error) {
 	case errors.Is(err, errs.ErrNotFound) ||
 		errors.Is(err, errs.ErrUserNotFound) ||
 		errors.Is(err, errs.ErrVideoNotFound) ||
-		errors.Is(err, errs.ErrCommentNotFound):
+		errors.Is(err, errs.ErrCommentNotFound) ||
+		errors.Is(err, errs.ErrCategoryNotFound):
 		writeJSON(w, http.StatusNotFound, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrInvalidRequestBody) ||
 		errors.Is(err, errs.ErrInvalidFieldValue) ||
-		errors.Is(err, errs.ErrCannotSubscribeToYourself):
+		errors.Is(err, errs.ErrCannotSubscribeToYourself) ||
+		errors.Is(err, errs.ErrCannotDonateToYourself):
 		writeJSON(w, http.StatusBadRequest, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrIncorrectUsernameOrPassword) || errors.Is(err, errs.ErrInvalidToken):
 		writeJSON(w, http.StatusUnauthorized, CommonError{Error: err.Error()})

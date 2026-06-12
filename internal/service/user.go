@@ -73,6 +73,10 @@ func (s *Service) Authenticate(user domain.User) (int, string, error) {
 }
 
 func (s *Service) GetUserByID(id int) (domain.User, error) {
+	if id <= 0 {
+		return domain.User{}, errs.ErrInvalidFieldValue
+	}
+
 	user, err := s.repository.GetUserByID(id)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
@@ -82,4 +86,41 @@ func (s *Service) GetUserByID(id int) (domain.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, error) {
+	user.Username = strings.TrimSpace(user.Username)
+	user.Email = strings.TrimSpace(user.Email)
+	user.AvatarURL = strings.TrimSpace(user.AvatarURL)
+
+	if userID <= 0 || user.Username == "" {
+		return domain.User{}, errs.ErrInvalidFieldValue
+	}
+
+	if _, err := s.GetUserByID(userID); err != nil {
+		return domain.User{}, err
+	}
+
+	userByUsername, err := s.repository.GetUserByUsername(user.Username)
+	if err != nil {
+		if !errors.Is(err, errs.ErrNotFound) {
+			return domain.User{}, err
+		}
+	} else if userByUsername.ID != userID {
+		return domain.User{}, errs.ErrUsernameAlreadyExists
+	}
+
+	if user.Email != "" {
+		userByEmail, err := s.repository.GetUserByEmail(user.Email)
+		if err != nil {
+			if !errors.Is(err, errs.ErrNotFound) {
+				return domain.User{}, err
+			}
+		} else if userByEmail.ID != userID {
+			return domain.User{}, errs.ErrEmailAlreadyExists
+		}
+	}
+
+	user.ID = userID
+	return s.repository.UpdateUserProfile(user)
 }

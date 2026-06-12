@@ -2,7 +2,7 @@ package dto
 
 type SignUpRequest struct {
 	Username string `json:"username"`
-	Email    string `json:"email"`
+	Email string `json:"email"`
 	Password string `json:"password"`
 }
 
@@ -12,6 +12,6 @@ type SignInRequest struct {
 }
 
 type TokenPairResponse struct {
-	AccessToken  string `json:"access_token"`
+	AccessToken string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }

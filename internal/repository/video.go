@@ -9,14 +9,15 @@ import (
 func (r *Repository) CreateVideo(video domain.Video) (domain.Video, error) {
 	var dbVideo dbModels.Video
 	err := r.db.Get(&dbVideo, `
-		INSERT INTO videos (author_id, title, description, video_url, thumbnail_url, status)
-		VALUES ($1, $2, NULLIF($3, ''), $4, NULLIF($5, ''), $6)
-		RETURNING id, author_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
+		INSERT INTO videos (author_id, title, description, video_url, thumbnail_url, category_id, status)
+		VALUES ($1, $2, NULLIF($3, ''), $4, NULLIF($5, ''), $6, $7)
+		RETURNING id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
 		video.AuthorID,
 		video.Title,
 		video.Description,
 		video.VideoURL,
 		video.ThumbnailURL,
+		video.CategoryID,
 		video.Status,
 	)
 	if err != nil {
@@ -29,7 +30,7 @@ func (r *Repository) CreateVideo(video domain.Video) (domain.Video, error) {
 func (r *Repository) GetAllVideos() ([]domain.Video, error) {
 	var dbVideos []dbModels.Video
 	err := r.db.Select(&dbVideos, `
-		SELECT id, author_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
+		SELECT id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
 		FROM videos
 		WHERE status = $1
 		ORDER BY created_at DESC`, domain.VideoStatusActive)
@@ -47,8 +48,8 @@ func (r *Repository) GetAllVideos() ([]domain.Video, error) {
 
 func (r *Repository) GetRecommendedVideos() ([]domain.Video, error) {
 	var dbVideos []dbModels.Video
-	err := r.db.Select(&dbVideos, `
-		SELECT v.id, v.author_id, v.title, v.description, v.video_url, v.thumbnail_url, v.views, v.status, v.created_at, v.updated_at
+	err := r.db.Select(&dbVideos, 
+		`SELECT v.id, v.author_id, v.category_id, v.title, v.description, v.video_url, v.thumbnail_url, v.views, v.status, v.created_at, v.updated_at
 		FROM videos v
 		LEFT JOIN video_likes vl ON vl.video_id = v.id
 		WHERE v.status = $1
@@ -69,8 +70,8 @@ func (r *Repository) GetRecommendedVideos() ([]domain.Video, error) {
 
 func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 	var dbVideo dbModels.Video
-	if err := r.db.Get(&dbVideo, `
-		SELECT id, author_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
+	if err := r.db.Get(&dbVideo, 
+		`SELECT id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
 		FROM videos
 		WHERE id = $1 AND status = $2`, id, domain.VideoStatusActive); err != nil {
 		return domain.Video{}, r.translateError(err)
@@ -80,8 +81,8 @@ func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 }
 
 func (r *Repository) IncrementVideoViews(id int) error {
-	result, err := r.db.Exec(`
-		UPDATE videos
+	result, err := r.db.Exec( 
+		`UPDATE videos
 		SET views = views + 1, updated_at = CURRENT_TIMESTAMP
 		WHERE id = $1 AND status = $2`, id, domain.VideoStatusActive)
 	if err != nil {
@@ -101,19 +102,21 @@ func (r *Repository) IncrementVideoViews(id int) error {
 
 func (r *Repository) UpdateVideo(video domain.Video) (domain.Video, error) {
 	var dbVideo dbModels.Video
-	err := r.db.Get(&dbVideo, `
-		UPDATE videos
+	err := r.db.Get(&dbVideo, 
+		`UPDATE videos
 		SET title = $1,
 		    description = NULLIF($2, ''),
 		    video_url = $3,
 		    thumbnail_url = NULLIF($4, ''),
+		    category_id = $5,
 		    updated_at = CURRENT_TIMESTAMP
-		WHERE id = $5 AND status = $6
-		RETURNING id, author_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
+		WHERE id = $6 AND status = $7
+		RETURNING id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
 		video.Title,
 		video.Description,
 		video.VideoURL,
 		video.ThumbnailURL,
+		video.CategoryID,
 		video.ID,
 		domain.VideoStatusActive,
 	)
@@ -125,8 +128,8 @@ func (r *Repository) UpdateVideo(video domain.Video) (domain.Video, error) {
 }
 
 func (r *Repository) DeleteVideo(id int) error {
-	result, err := r.db.Exec(`
-		UPDATE videos
+	result, err := r.db.Exec( 
+		`UPDATE videos
 		SET status = $1, updated_at = CURRENT_TIMESTAMP
 		WHERE id = $2 AND status = $3`, domain.VideoStatusDeleted, id, domain.VideoStatusActive)
 	if err != nil {
@@ -142,4 +145,23 @@ func (r *Repository) DeleteVideo(id int) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) GetVideosByAuthorID(authorID int) ([]domain.Video, error) {
+	var dbVideos []dbModels.Video
+	err := r.db.Select(&dbVideos, 
+		`SELECT id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
+		FROM videos
+		WHERE author_id = $1 AND status = $2
+		ORDER BY created_at DESC`, authorID, domain.VideoStatusActive)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+
+	videos := make([]domain.Video, 0, len(dbVideos))
+	for _, video := range dbVideos {
+		videos = append(videos, video.ToDomain())
+	}
+
+	return videos, nil
 }
