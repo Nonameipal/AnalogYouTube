@@ -14,67 +14,67 @@ func (ctrl *Controller) InitRoutes() error {
 
 	r.HandleFunc("/ping", ctrl.ping).Methods(http.MethodGet)
 
-	authG := r.PathPrefix("/auth").Subrouter()
+	auth := r.PathPrefix("/auth").Subrouter()
 	{
-		authG.HandleFunc("/sign-up", ctrl.SignUp).Methods(http.MethodPost)
-		authG.HandleFunc("/sign-in", ctrl.SignIn).Methods(http.MethodPost)
-		authG.HandleFunc("/refresh", ctrl.RefreshTokenPair).Methods(http.MethodGet)
+		auth.HandleFunc("/sign-up", ctrl.SignUp).Methods(http.MethodPost)
+		auth.HandleFunc("/sign-in", ctrl.SignIn).Methods(http.MethodPost)
+		auth.HandleFunc("/refresh", ctrl.RefreshTokenPair).Methods(http.MethodGet)
 	}
 
-	apiV1 := r.PathPrefix("/api/v1").Subrouter()
+	api := r.PathPrefix("/api").Subrouter()
 	{
-		apiV1.HandleFunc("/register", ctrl.SignUp).Methods(http.MethodPost)
-		apiV1.HandleFunc("/login", ctrl.SignIn).Methods(http.MethodPost)
-		apiV1.HandleFunc("/videos", ctrl.GetAllVideos).Methods(http.MethodGet)
-		apiV1.HandleFunc("/videos/recommended", ctrl.GetRecommendedVideos).Methods(http.MethodGet)
-		apiV1.HandleFunc("/videos/{id}", ctrl.GetVideoByID).Methods(http.MethodGet)
-		apiV1.HandleFunc("/videos/{id}/likes/count", ctrl.GetVideoLikesCount).Methods(http.MethodGet)
-		apiV1.HandleFunc("/videos/{id}/comments", ctrl.GetVideoComments).Methods(http.MethodGet)
+		api.HandleFunc("/register", ctrl.SignUp).Methods(http.MethodPost)
+		api.HandleFunc("/login", ctrl.SignIn).Methods(http.MethodPost)
+		api.HandleFunc("/videos", ctrl.GetAllVideos).Methods(http.MethodGet)
+		api.HandleFunc("/videos/recommended", ctrl.GetRecommendedVideos).Methods(http.MethodGet)
+		api.HandleFunc("/videos/{id}", ctrl.GetVideoByID).Methods(http.MethodGet)
+		api.HandleFunc("/videos/{id}/likes/count", ctrl.GetVideoLikesCount).Methods(http.MethodGet)
+		api.HandleFunc("/videos/{id}/comments", ctrl.GetVideoComments).Methods(http.MethodGet)
 
-		apiV1.HandleFunc("/categories", ctrl.GetAllCategories).Methods(http.MethodGet)
-		apiV1.HandleFunc("/categories/{id}", ctrl.GetCategoryByID).Methods(http.MethodGet)
+		api.HandleFunc("/categories", ctrl.GetAllCategories).Methods(http.MethodGet)
+		api.HandleFunc("/categories/{id}", ctrl.GetCategoryByID).Methods(http.MethodGet)
 
-		apiV1.HandleFunc("/users/{id}", ctrl.GetUserProfile).Methods(http.MethodGet)
-		apiV1.HandleFunc("/users/{id}/videos", ctrl.GetUserVideos).Methods(http.MethodGet)
-		apiV1.HandleFunc("/users/{id}/donations", ctrl.GetUserDonations).Methods(http.MethodGet)
-		apiV1.HandleFunc("/users/{id}/subscribers/count", ctrl.GetSubscribersCount).Methods(http.MethodGet)
-		apiV1.HandleFunc("/users/{id}/subscriptions/count", ctrl.GetSubscriptionsCount).Methods(http.MethodGet)
+		api.HandleFunc("/users/{id}", ctrl.GetUserProfile).Methods(http.MethodGet)
+		api.HandleFunc("/users/{id}/videos", ctrl.GetUserVideos).Methods(http.MethodGet)
+		api.HandleFunc("/users/{id}/donations", ctrl.GetUserDonations).Methods(http.MethodGet)
+		api.HandleFunc("/users/{id}/subscribers/count", ctrl.GetSubscribersCount).Methods(http.MethodGet)
+		api.HandleFunc("/users/{id}/subscriptions/count", ctrl.GetSubscriptionsCount).Methods(http.MethodGet)
 	}
 
-	authApiV1 := apiV1.PathPrefix("").Subrouter()
-	authApiV1.Use(ctrl.checkUserAuthentication)
+	auth = api.PathPrefix("").Subrouter()
+	auth.Use(ctrl.checkUserAuthentication)
 	{
-		authApiV1.HandleFunc("/me", ctrl.Me).Methods(http.MethodGet)
-		authApiV1.HandleFunc("/me", ctrl.UpdateMe).Methods(http.MethodPut)
+		auth.HandleFunc("/me", ctrl.Me).Methods(http.MethodGet)
+		auth.HandleFunc("/me", ctrl.UpdateMe).Methods(http.MethodPut)
 
-		authApiV1.HandleFunc("/videos", ctrl.CreateVideo).Methods(http.MethodPost)
-		authApiV1.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
-		authApiV1.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
+		auth.HandleFunc("/videos", ctrl.CreateVideo).Methods(http.MethodPost)
+		auth.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
+		auth.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
 
-		authApiV1.HandleFunc("/videos/{id}/like", ctrl.LikeVideo).Methods(http.MethodPost)
-		authApiV1.HandleFunc("/videos/{id}/like", ctrl.UnlikeVideo).Methods(http.MethodDelete)
-		authApiV1.HandleFunc("/videos/{id}/liked", ctrl.IsVideoLikedByMe).Methods(http.MethodGet)
+		auth.HandleFunc("/videos/{id}/like", ctrl.LikeVideo).Methods(http.MethodPost)
+		auth.HandleFunc("/videos/{id}/like", ctrl.UnlikeVideo).Methods(http.MethodDelete)
+		auth.HandleFunc("/videos/{id}/liked", ctrl.IsVideoLikedByMe).Methods(http.MethodGet)
 
-		authApiV1.HandleFunc("/users/{id}/subscribe", ctrl.SubscribeToUser).Methods(http.MethodPost)
-		authApiV1.HandleFunc("/users/{id}/subscribe", ctrl.UnsubscribeFromUser).Methods(http.MethodDelete)
-		authApiV1.HandleFunc("/users/{id}/subscribed", ctrl.IsSubscribedByMe).Methods(http.MethodGet)
+		auth.HandleFunc("/users/{id}/subscribe", ctrl.SubscribeToUser).Methods(http.MethodPost)
+		auth.HandleFunc("/users/{id}/subscribe", ctrl.UnsubscribeFromUser).Methods(http.MethodDelete)
+	    auth.HandleFunc("/users/{id}/subscribed", ctrl.IsSubscribedByMe).Methods(http.MethodGet)
 
-		authApiV1.HandleFunc("/videos/{id}/comments", ctrl.CreateComment).Methods(http.MethodPost)
-		authApiV1.HandleFunc("/comments/{id}", ctrl.UpdateComment).Methods(http.MethodPut)
-		authApiV1.HandleFunc("/comments/{id}", ctrl.DeleteComment).Methods(http.MethodDelete)
+		auth.HandleFunc("/videos/{id}/comments", ctrl.CreateComment).Methods(http.MethodPost)
+		auth.HandleFunc("/comments/{id}", ctrl.UpdateComment).Methods(http.MethodPut)
+		auth.HandleFunc("/comments/{id}", ctrl.DeleteComment).Methods(http.MethodDelete)
 
-		authApiV1.HandleFunc("/donations", ctrl.CreateDonation).Methods(http.MethodPost)
-		authApiV1.HandleFunc("/donations/sent", ctrl.GetSentDonations).Methods(http.MethodGet)
-		authApiV1.HandleFunc("/donations/received", ctrl.GetReceivedDonations).Methods(http.MethodGet)
+		auth.HandleFunc("/donations", ctrl.CreateDonation).Methods(http.MethodPost)
+		auth.HandleFunc("/donations/sent", ctrl.GetSentDonations).Methods(http.MethodGet)
+		auth.HandleFunc("/donations/received", ctrl.GetReceivedDonations).Methods(http.MethodGet)
 	}
 
-	adminApiV1 := apiV1.PathPrefix("").Subrouter()
-	adminApiV1.Use(ctrl.checkUserAuthentication)
-	adminApiV1.Use(ctrl.checkIsAdmin)
+	admin := api.PathPrefix("").Subrouter()
+	admin.Use(ctrl.checkUserAuthentication)
+	admin.Use(ctrl.checkIsAdmin)
 	{
-		adminApiV1.HandleFunc("/categories", ctrl.CreateCategory).Methods(http.MethodPost)
-		adminApiV1.HandleFunc("/categories/{id}", ctrl.UpdateCategory).Methods(http.MethodPut)
-		adminApiV1.HandleFunc("/categories/{id}", ctrl.DeleteCategory).Methods(http.MethodDelete)
+		admin.HandleFunc("/categories", ctrl.CreateCategory).Methods(http.MethodPost)
+		admin.HandleFunc("/categories/{id}", ctrl.UpdateCategory).Methods(http.MethodPut)
+		admin.HandleFunc("/categories/{id}", ctrl.DeleteCategory).Methods(http.MethodDelete)
 	}
 
 	addr := fmt.Sprintf(":%s", configs.AppSettings.AppParams.PortRun)
