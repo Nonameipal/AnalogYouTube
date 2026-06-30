@@ -18,9 +18,9 @@ type CustomClaims struct {
 func GenerateToken(userID int, ttl int, role string, isRefresh bool) (string, error) {
 	claims := CustomClaims{
 		RegisteredClaims: jwt.RegisteredClaims{},
-		UserID:         userID,
-		IsRefresh:      isRefresh,
-		Role:           role,
+		UserID: userID,
+		IsRefresh: isRefresh,
+		Role: role,
 	}
 
 	if isRefresh {

@@ -14,6 +14,7 @@ type User struct {
 	Password string `db:"password"`
 	Role string `db:"role"`
 	AvatarURL sql.NullString `db:"avatar_url"`
+	Description sql.NullString `db:"description"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
@@ -28,5 +29,6 @@ func (u User) ToDomain() domain.User {
 		AvatarURL: u.AvatarURL.String,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
+		Description: u.Description.String,
 	}
 }

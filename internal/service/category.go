@@ -23,12 +23,12 @@ func (s *Service) GetAllCategories() ([]domain.Category, error) {
 	return s.repository.GetAllCategories()
 }
 
-func (s *Service) GetCategoryByID(id int) (domain.Category, error) {
-	if id <= 0 {
+func (s *Service) GetCategoryByName(name string) (domain.Category, error) {
+	if name == "" {
 		return domain.Category{}, errs.ErrInvalidFieldValue
 	}
 
-	category, err := s.repository.GetCategoryByID(id)
+	category, err := s.repository.GetCategoryByName(name)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return domain.Category{}, errs.ErrCategoryNotFound

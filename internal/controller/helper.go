@@ -12,7 +12,7 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	refreshTokenHeader  = "X-Refresh-Token"
+	refreshTokenHeader  = "Refresh-Token"
 )
 
 func writeJSON(w http.ResponseWriter, statusCode int, data any) {

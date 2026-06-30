@@ -11,7 +11,7 @@ type Comment struct {
 	UserID int `db:"user_id"`
 	VideoID int `db:"video_id"`
 	Text string `db:"text"`
-	Status string`db:"status"`
+	Status string `db:"status"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }

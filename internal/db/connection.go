@@ -5,11 +5,11 @@ import (
 
 	"github.com/Nonameipal/AnalogYouTube/internal/configs"
 	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"context"
 )
 
-func InitConnection() (*sqlx.DB, error) {
+func InitConnection() (*pgxpool.Pool, error) {
 	connectionConfigs := configs.AppSettings.PostgresParams
 	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
 		connectionConfigs.User,
@@ -25,19 +25,20 @@ func InitConnection() (*sqlx.DB, error) {
 		Str("user", connectionConfigs.User).
 		Msg("connecting to postgres")
 
-	dbConn, err := sqlx.Connect("postgres", connStr)
+	pgxpool, err := pgxpool.New(context.Background(), connStr)
 	if err != nil {
 		return nil, err
 	}
 
 	appLogger.GetLogger().Info().Msg("postgres connection established")
-	return dbConn, nil
+	return pgxpool, nil
 }
 
-func CloseConnection(db *sqlx.DB) error {
+func CloseConnection(db *pgxpool.Pool) error {
 	if db == nil {
 		return nil
 	}
 
-	return db.Close()
+	db.Close()
+	return nil
 }

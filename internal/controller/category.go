@@ -8,6 +8,7 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 	"github.com/Nonameipal/AnalogYouTube/internal/models/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/models/dto"
+	"github.com/gorilla/mux"
 )
 
 func (ctrl *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +19,7 @@ func (ctrl *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	category, err := ctrl.service.CreateCategory(domain.Category{
-		Name:        input.Name,
+		Name: input.Name,
 		Description: input.Description,
 	})
 	if err != nil {
@@ -39,14 +40,14 @@ func (ctrl *Controller) GetAllCategories(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, http.StatusOK, categories)
 }
 
-func (ctrl *Controller) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
-	categoryID, err := getIDFromRequest(r, "id")
-	if err != nil {
-		ctrl.handleError(w, err)
+func (ctrl *Controller) GetCategoryByName(w http.ResponseWriter, r *http.Request) {
+	categoryName := mux.Vars(r)["name"]
+	if categoryName == "" {
+		ctrl.handleError(w, errs.ErrInvalidFieldValue)
 		return
 	}
 
-	category, err := ctrl.service.GetCategoryByID(categoryID)
+	category, err := ctrl.service.GetCategoryByName(categoryName)
 	if err != nil {
 		ctrl.handleError(w, err)
 		return

@@ -14,13 +14,14 @@ type RepositoryI interface {
 	GetRecommendedVideos() ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
 	GetVideosByAuthorID(authorID int) ([]domain.Video, error)
+	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
 	DeleteVideo(id int) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
-	GetCategoryByID(id int) (domain.Category, error)
+	GetCategoryByName(name string) (domain.Category, error)
 	UpdateCategory(category domain.Category) (domain.Category, error)
 	DeleteCategory(id int) error
 
@@ -45,4 +46,10 @@ type RepositoryI interface {
 	GetCommentByID(commentID int) (domain.Comment, error)
 	UpdateComment(comment domain.Comment) (domain.Comment, error)
 	DeleteComment(commentID int) error
+
+	CreateOrGetChat(firstUserID int, secondUserID int) (domain.Chat, error)
+	GetChatByID(chatID int) (domain.Chat, error)
+	GetUserChats(userID int) ([]domain.Chat, error)
+	CreateChatMessage(message domain.ChatMessage) (domain.ChatMessage, error)
+	GetChatMessages(chatID int) ([]domain.ChatMessage, error)
 }

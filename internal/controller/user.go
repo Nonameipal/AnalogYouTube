@@ -59,6 +59,7 @@ func (ctrl *Controller) UpdateMe(w http.ResponseWriter, r *http.Request) {
 		Username: input.Username,
 		Email: input.Email,
 		AvatarURL: input.AvatarURL,
+		Description: input.Description,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)

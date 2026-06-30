@@ -5,7 +5,7 @@ type CreateVideoRequest struct {
 	Description string `json:"description"`
 	VideoURL string `json:"video_url"`
 	ThumbnailURL string `json:"thumbnail_url"`
-	CategoryID *int `json:"category_id"`
+	CategoryName *string `json:"category_name"`
 }
 
 type UpdateVideoRequest struct {
@@ -13,5 +13,5 @@ type UpdateVideoRequest struct {
 	Description string `json:"description"`
 	VideoURL string `json:"video_url"`
 	ThumbnailURL string `json:"thumbnail_url"`
-	CategoryID *int `json:"category_id"`
+	CategoryName *string `json:"category_name"`
 }

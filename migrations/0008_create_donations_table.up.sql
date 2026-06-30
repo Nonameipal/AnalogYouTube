@@ -3,14 +3,14 @@ CREATE TABLE IF NOT EXISTS donations (
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
     video_id INT NULL,
-    amount NUMERIC(10,2) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
     message TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE SET NULL,
     CHECK (amount > 0),
-    CHECK (sender_id <> receiver_id)
+    CHECK (sender_id != receiver_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_donations_sender_id ON donations(sender_id);

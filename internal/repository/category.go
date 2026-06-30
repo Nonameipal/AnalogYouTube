@@ -1,20 +1,23 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 	dbModels "github.com/Nonameipal/AnalogYouTube/internal/models/db"
 	"github.com/Nonameipal/AnalogYouTube/internal/models/domain"
 )
 
 func (r *Repository) CreateCategory(category domain.Category) (domain.Category, error) {
+	ctx := context.Background()
 	var dbCategory dbModels.Category
-	err := r.db.Get(&dbCategory, 
+	err := r.db.QueryRow(ctx,
 		`INSERT INTO categories (name, description)
 		VALUES ($1, NULLIF($2, ''))
 		RETURNING id, name, description, created_at, updated_at`,
 		category.Name,
 		category.Description,
-	)
+	).Scan(&dbCategory.ID, &dbCategory.Name, &dbCategory.Description, &dbCategory.CreatedAt, &dbCategory.UpdatedAt)
 	if err != nil {
 		return domain.Category{}, r.translateError(err)
 	}
@@ -23,12 +26,26 @@ func (r *Repository) CreateCategory(category domain.Category) (domain.Category, 
 }
 
 func (r *Repository) GetAllCategories() ([]domain.Category, error) {
-	var dbCategories []dbModels.Category
-	err := r.db.Select(&dbCategories, 
+	ctx := context.Background()
+	rows, err := r.db.Query(ctx,
 		`SELECT id, name, description, created_at, updated_at
 		FROM categories
 		ORDER BY name ASC`)
 	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	var dbCategories []dbModels.Category
+	for rows.Next() {
+		var category dbModels.Category
+		if err := rows.Scan(&category.ID, &category.Name, &category.Description, &category.CreatedAt, &category.UpdatedAt); err != nil {
+			return nil, r.translateError(err)
+		}
+		dbCategories = append(dbCategories, category)
+	}
+
+	if err := rows.Err(); err != nil {
 		return nil, r.translateError(err)
 	}
 
@@ -40,12 +57,15 @@ func (r *Repository) GetAllCategories() ([]domain.Category, error) {
 	return categories, nil
 }
 
-func (r *Repository) GetCategoryByID(id int) (domain.Category, error) {
+func (r *Repository) GetCategoryByName(name string) (domain.Category, error) {
+	ctx := context.Background()
 	var dbCategory dbModels.Category
-	if err := r.db.Get(&dbCategory,
+	err := r.db.QueryRow(ctx,
 		`SELECT id, name, description, created_at, updated_at
 		FROM categories
-		WHERE id = $1`, id); err != nil {
+		WHERE LOWER(name) = LOWER($1) 
+		LIMIT 1`, name).Scan(&dbCategory.ID, &dbCategory.Name, &dbCategory.Description, &dbCategory.CreatedAt, &dbCategory.UpdatedAt)
+	if err != nil {
 		return domain.Category{}, r.translateError(err)
 	}
 
@@ -53,8 +73,9 @@ func (r *Repository) GetCategoryByID(id int) (domain.Category, error) {
 }
 
 func (r *Repository) UpdateCategory(category domain.Category) (domain.Category, error) {
+	ctx := context.Background()
 	var dbCategory dbModels.Category
-	err := r.db.Get(&dbCategory, 
+	err := r.db.QueryRow(ctx,
 		`UPDATE categories
 		SET name = $1,
 		    description = NULLIF($2, ''),
@@ -64,7 +85,7 @@ func (r *Repository) UpdateCategory(category domain.Category) (domain.Category, 
 		category.Name,
 		category.Description,
 		category.ID,
-	)
+	).Scan(&dbCategory.ID, &dbCategory.Name, &dbCategory.Description, &dbCategory.CreatedAt, &dbCategory.UpdatedAt)
 	if err != nil {
 		return domain.Category{}, r.translateError(err)
 	}
@@ -73,17 +94,15 @@ func (r *Repository) UpdateCategory(category domain.Category) (domain.Category, 
 }
 
 func (r *Repository) DeleteCategory(id int) error {
-	result, err := r.db.Exec(
+	ctx := context.Background()
+	result, err := r.db.Exec(ctx,
 		`DELETE FROM categories
 		WHERE id = $1`, id)
 	if err != nil {
 		return r.translateError(err)
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return r.translateError(err)
-	}
+	rowsAffected := result.RowsAffected()
 	if rowsAffected == 0 {
 		return errs.ErrNotFound
 	}

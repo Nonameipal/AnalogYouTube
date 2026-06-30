@@ -23,10 +23,10 @@ type Video struct {
 
 func (v Video) ToDomain() domain.Video {
 	var categoryID *int
-	if v.CategoryID.Valid {
-		value := int(v.CategoryID.Int64)
-		categoryID = &value
-	}
+    if v.CategoryID.Valid {
+	value := int(v.CategoryID.Int64)
+	categoryID = &value
+}
 
 	return domain.Video{
 		ID: v.ID,

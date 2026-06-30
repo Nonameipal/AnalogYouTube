@@ -25,14 +25,15 @@ func (ctrl *Controller) InitRoutes() error {
 	{
 		api.HandleFunc("/register", ctrl.SignUp).Methods(http.MethodPost)
 		api.HandleFunc("/login", ctrl.SignIn).Methods(http.MethodPost)
-		api.HandleFunc("/videos", ctrl.GetAllVideos).Methods(http.MethodGet)
-		api.HandleFunc("/videos/recommended", ctrl.GetRecommendedVideos).Methods(http.MethodGet)
+		api.HandleFunc("/videos", ctrl.GetRecommendedVideos).Methods(http.MethodGet)
+		api.HandleFunc("/videos/search", ctrl.SearchVideosByTitle).Methods(http.MethodGet)
+
 		api.HandleFunc("/videos/{id}", ctrl.GetVideoByID).Methods(http.MethodGet)
 		api.HandleFunc("/videos/{id}/likes/count", ctrl.GetVideoLikesCount).Methods(http.MethodGet)
 		api.HandleFunc("/videos/{id}/comments", ctrl.GetVideoComments).Methods(http.MethodGet)
 
 		api.HandleFunc("/categories", ctrl.GetAllCategories).Methods(http.MethodGet)
-		api.HandleFunc("/categories/{id}", ctrl.GetCategoryByID).Methods(http.MethodGet)
+		api.HandleFunc("/categories/{name}", ctrl.GetCategoryByName).Methods(http.MethodGet) 
 
 		api.HandleFunc("/users/{id}", ctrl.GetUserProfile).Methods(http.MethodGet)
 		api.HandleFunc("/users/{id}/videos", ctrl.GetUserVideos).Methods(http.MethodGet)
@@ -57,7 +58,7 @@ func (ctrl *Controller) InitRoutes() error {
 
 		auth.HandleFunc("/users/{id}/subscribe", ctrl.SubscribeToUser).Methods(http.MethodPost)
 		auth.HandleFunc("/users/{id}/subscribe", ctrl.UnsubscribeFromUser).Methods(http.MethodDelete)
-	    auth.HandleFunc("/users/{id}/subscribed", ctrl.IsSubscribedByMe).Methods(http.MethodGet)
+		auth.HandleFunc("/users/{id}/subscribed", ctrl.IsSubscribedByMe).Methods(http.MethodGet)
 
 		auth.HandleFunc("/videos/{id}/comments", ctrl.CreateComment).Methods(http.MethodPost)
 		auth.HandleFunc("/comments/{id}", ctrl.UpdateComment).Methods(http.MethodPut)
@@ -66,6 +67,11 @@ func (ctrl *Controller) InitRoutes() error {
 		auth.HandleFunc("/donations", ctrl.CreateDonation).Methods(http.MethodPost)
 		auth.HandleFunc("/donations/sent", ctrl.GetSentDonations).Methods(http.MethodGet)
 		auth.HandleFunc("/donations/received", ctrl.GetReceivedDonations).Methods(http.MethodGet)
+
+		auth.HandleFunc("/chats", ctrl.CreateOrGetChat).Methods(http.MethodPost)
+		auth.HandleFunc("/chats", ctrl.GetMyChats).Methods(http.MethodGet)
+		auth.HandleFunc("/chats/{id}/messages", ctrl.GetChatMessages).Methods(http.MethodGet)
+		auth.HandleFunc("/chats/{id}/messages", ctrl.CreateChatMessage).Methods(http.MethodPost)
 	}
 
 	admin := api.PathPrefix("").Subrouter()
@@ -75,7 +81,10 @@ func (ctrl *Controller) InitRoutes() error {
 		admin.HandleFunc("/categories", ctrl.CreateCategory).Methods(http.MethodPost)
 		admin.HandleFunc("/categories/{id}", ctrl.UpdateCategory).Methods(http.MethodPut)
 		admin.HandleFunc("/categories/{id}", ctrl.DeleteCategory).Methods(http.MethodDelete)
+		admin.HandleFunc("/videos/allvideos", ctrl.GetAllVideos).Methods(http.MethodGet)
 	}
+
+	r.HandleFunc("/ws/chats/{id}", ctrl.ChatWebSocket).Methods(http.MethodGet)
 
 	addr := fmt.Sprintf(":%s", configs.AppSettings.AppParams.PortRun)
 	appLogger.GetLogger().Info().Str("addr", addr).Msg("server started")

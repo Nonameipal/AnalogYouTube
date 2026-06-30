@@ -10,6 +10,7 @@ const (
 type Video struct {
 	ID int `json:"id"`
 	AuthorID int `json:"author_id"`
+	CategoryName *string `json:"category_name"`
 	CategoryID *int `json:"category_id"`
 	Title string `json:"title"`
 	Description string `json:"description"`

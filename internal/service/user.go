@@ -92,6 +92,7 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
 	user.AvatarURL = strings.TrimSpace(user.AvatarURL)
+	user.Description = strings.TrimSpace(user.Description)
 
 	if userID <= 0 || user.Username == "" {
 		return domain.User{}, errs.ErrInvalidFieldValue
@@ -123,4 +124,44 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 
 	user.ID = userID
 	return s.repository.UpdateUserProfile(user)
+}
+
+func (s *Service) GetUserProfile(userID int) (domain.UserProfile, error) {
+	if userID <= 0 {
+		return domain.UserProfile{}, errs.ErrInvalidFieldValue
+	}
+
+	user, err := s.GetUserByID(userID)
+	if err != nil {
+		return domain.UserProfile{}, err
+	}
+
+	videos, err := s.repository.GetVideosByAuthorID(userID)
+	if err != nil {
+		return domain.UserProfile{}, err
+	}
+
+	subscribersCount, err := s.repository.GetSubscribersCount(userID)
+	if err != nil {
+		return domain.UserProfile{}, err
+	}
+
+	subscriptionsCount, err := s.repository.GetSubscriptionsCount(userID)
+	if err != nil {
+		return domain.UserProfile{}, err
+	}
+
+	return domain.UserProfile{
+		ID: user.ID,
+		Username: user.Username,
+		Email: user.Email,
+		Role: user.Role,
+		AvatarURL: user.AvatarURL,
+		Description: user.Description,
+		SubscribersCount: subscribersCount,
+		SubscriptionsCount: subscriptionsCount,
+		Videos: videos,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}, nil
 }

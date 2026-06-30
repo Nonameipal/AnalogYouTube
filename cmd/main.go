@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-	
 	logger := appLogger.GetLogger()
 
 	logger.Info().Msg("Starting AnalogYouTube service")
@@ -20,18 +19,18 @@ func main() {
 		return
 	}
 
-	dbConn, err := db.InitConnection()
+	pgxpool, err := db.InitConnection()
 	if err != nil {
 		logger.Error().Err(err).Msg("error during database connection initialization")
 		return
 	}
 	defer func() {
-		if err := db.CloseConnection(dbConn); err != nil {
+		if err := db.CloseConnection(pgxpool); err != nil {
 			logger.Error().Err(err).Msg("error during database connection close")
 		}
 	}()
 
-	repo := repository.NewRepository(dbConn)
+	repo := repository.NewRepository(pgxpool)
 	svc := service.NewService(repo)
 	ctrl := controller.NewController(svc)
 

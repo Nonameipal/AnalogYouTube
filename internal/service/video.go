@@ -14,18 +14,41 @@ func (s *Service) CreateVideo(authorID int, video domain.Video) (domain.Video, e
 	video.VideoURL = strings.TrimSpace(video.VideoURL)
 	video.ThumbnailURL = strings.TrimSpace(video.ThumbnailURL)
 
+
 	if authorID <= 0 || video.Title == "" || video.VideoURL == "" {
 		return domain.Video{}, errs.ErrInvalidFieldValue
 	}
 
-	if err := s.ensureCategoryExists(video.CategoryID); err != nil {
-		return domain.Video{}, err
-	}
+	categoryID, err := s.resolveCategoryIDByName(video.CategoryName)
+    if err != nil {
+	return domain.Video{}, err
+}
 
+
+	video.CategoryID = categoryID
 	video.AuthorID = authorID
 	video.Status = domain.VideoStatusActive
 
 	return s.repository.CreateVideo(video)
+}
+
+func (s *Service) resolveCategoryIDByName(categoryName *string) (*int, error) {
+	if categoryName == nil {
+		return nil, nil
+	}
+
+	name := strings.TrimSpace(*categoryName)
+	if name == "" {
+		return nil, nil
+	}
+
+	category, err := s.GetCategoryByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	categoryID := category.ID
+	return &categoryID, nil
 }
 
 func (s *Service) GetAllVideos() ([]domain.Video, error) {
@@ -98,9 +121,15 @@ func (s *Service) UpdateVideo(userID int, userRole string, video domain.Video) (
 		return domain.Video{}, errs.ErrAccessDenied
 	}
 
-	if err := s.ensureCategoryExists(video.CategoryID); err != nil {
+	categoryID := oldVideo.CategoryID
+    if video.CategoryName != nil {
+	categoryID, err = s.resolveCategoryIDByName(video.CategoryName)
+	if err != nil {
 		return domain.Video{}, err
 	}
+}
+
+video.CategoryID = categoryID
 
 	return s.repository.UpdateVideo(video)
 }
@@ -129,18 +158,27 @@ func (s *Service) DeleteVideo(userID int, userRole string, videoID int) error {
 	return nil
 }
 
-func (s *Service) ensureCategoryExists(categoryID *int) error {
-	if categoryID == nil {
+func (s *Service) CategoryExists(categoryName *string) error {
+	if categoryName == nil {
 		return nil
 	}
 
-	if *categoryID <= 0 {
+	if *categoryName == "" {
 		return errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetCategoryByID(*categoryID); err != nil {
+	if _, err := s.GetCategoryByName(*categoryName); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *Service) SearchVideosByTitle(title string) ([]domain.Video, error) {
+	title = strings.TrimSpace(title)
+	if title == "" {
+		return s.repository.GetRecommendedVideos()
+	}
+
+	return s.repository.SearchVideosByTitle(title)
 }

@@ -30,7 +30,7 @@ func (ctrl *Controller) CreateVideo(w http.ResponseWriter, r *http.Request) {
 		Description: input.Description,
 		VideoURL: input.VideoURL,
 		ThumbnailURL: input.ThumbnailURL,
-		CategoryID: input.CategoryID,
+		CategoryName: input.CategoryName,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)
@@ -42,6 +42,18 @@ func (ctrl *Controller) CreateVideo(w http.ResponseWriter, r *http.Request) {
 
 func (ctrl *Controller) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	videos, err := ctrl.service.GetAllVideos()
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, videos)
+}
+
+func (ctrl *Controller) SearchVideosByTitle(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Query().Get("title")
+
+	videos, err := ctrl.service.SearchVideosByTitle(title)
 	if err != nil {
 		ctrl.handleError(w, err)
 		return
@@ -112,7 +124,7 @@ func (ctrl *Controller) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 		Description: input.Description,
 		VideoURL: input.VideoURL,
 		ThumbnailURL: input.ThumbnailURL,
-		CategoryID: input.CategoryID,
+		CategoryName: input.CategoryName,
 	})
 	if err != nil {
 		ctrl.handleError(w, err)

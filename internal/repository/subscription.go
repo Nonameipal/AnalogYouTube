@@ -1,7 +1,10 @@
 package repository
 
+import "context"
+
 func (r *Repository) SubscribeToUser(subscriberID int, authorID int) error {
-	_, err := r.db.Exec(
+	ctx := context.Background()
+	_, err := r.db.Exec(ctx,
 		`INSERT INTO subscriptions (subscriber_id, author_id)
 		VALUES ($1, $2)
 		ON CONFLICT (subscriber_id, author_id) DO NOTHING`, subscriberID, authorID)
@@ -13,7 +16,8 @@ func (r *Repository) SubscribeToUser(subscriberID int, authorID int) error {
 }
 
 func (r *Repository) UnsubscribeFromUser(subscriberID int, authorID int) error {
-	_, err := r.db.Exec(
+	ctx := context.Background()
+	_, err := r.db.Exec(ctx,
 		`DELETE FROM subscriptions
 		WHERE subscriber_id = $1 AND author_id = $2`, subscriberID, authorID)
 	if err != nil {
@@ -24,11 +28,13 @@ func (r *Repository) UnsubscribeFromUser(subscriberID int, authorID int) error {
 }
 
 func (r *Repository) GetSubscribersCount(authorID int) (int, error) {
+	ctx := context.Background()
 	var count int
-	if err := r.db.Get(&count, 
+	err := r.db.QueryRow(ctx,
 		`SELECT COUNT(*)
 		FROM subscriptions
-		WHERE author_id = $1`, authorID); err != nil {
+		WHERE author_id = $1`, authorID).Scan(&count)
+	if err != nil {
 		return 0, r.translateError(err)
 	}
 
@@ -36,11 +42,13 @@ func (r *Repository) GetSubscribersCount(authorID int) (int, error) {
 }
 
 func (r *Repository) GetSubscriptionsCount(subscriberID int) (int, error) {
+	ctx := context.Background()
 	var count int
-	if err := r.db.Get(&count, 
+	err := r.db.QueryRow(ctx,
 		`SELECT COUNT(*)
 		FROM subscriptions
-		WHERE subscriber_id = $1`, subscriberID); err != nil {
+		WHERE subscriber_id = $1`, subscriberID).Scan(&count)
+	if err != nil {
 		return 0, r.translateError(err)
 	}
 
@@ -48,11 +56,13 @@ func (r *Repository) GetSubscriptionsCount(subscriberID int) (int, error) {
 }
 
 func (r *Repository) IsSubscribed(subscriberID int, authorID int) (bool, error) {
+	ctx := context.Background()
 	var exists bool
-	if err := r.db.Get(&exists, 
+	err := r.db.QueryRow(ctx,
 		`SELECT EXISTS(
 			SELECT 1 FROM subscriptions WHERE subscriber_id = $1 AND author_id = $2
-		)`, subscriberID, authorID); err != nil {
+		)`, subscriberID, authorID).Scan(&exists)
+	if err != nil {
 		return false, r.translateError(err)
 	}
 

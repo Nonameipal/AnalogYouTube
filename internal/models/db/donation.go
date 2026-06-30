@@ -14,7 +14,7 @@ type Donation struct {
 	VideoID sql.NullInt64 `db:"video_id"`
 	Amount float64 `db:"amount"`
 	Message sql.NullString `db:"message"`
-	CreatedAt  time.Time  `db:"created_at"`
+	CreatedAt time.Time `db:"created_at"`
 }
 
 func (d Donation) ToDomain() domain.Donation {
@@ -25,12 +25,12 @@ func (d Donation) ToDomain() domain.Donation {
 	}
 
 	return domain.Donation{
-		ID:         d.ID,
-		SenderID:   d.SenderID,
+		ID: d.ID,
+		SenderID: d.SenderID,
 		ReceiverID: d.ReceiverID,
-		VideoID:    videoID,
-		Amount:     d.Amount,
-		Message:    d.Message.String,
-		CreatedAt:  d.CreatedAt,
+		VideoID: videoID,
+		Amount: d.Amount,
+		Message: d.Message.String,
+		CreatedAt: d.CreatedAt,
 	}
 }

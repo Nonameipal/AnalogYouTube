@@ -1,13 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	dbModels "github.com/Nonameipal/AnalogYouTube/internal/models/db"
 	"github.com/Nonameipal/AnalogYouTube/internal/models/domain"
 )
 
 func (r *Repository) CreateDonation(donation domain.Donation) (domain.Donation, error) {
+	ctx := context.Background()
 	var dbDonation dbModels.Donation
-	err := r.db.Get(&dbDonation, 
+	err := r.db.QueryRow(ctx,
 		`INSERT INTO donations (sender_id, receiver_id, video_id, amount, message)
 		VALUES ($1, $2, $3, $4, NULLIF($5, ''))
 		RETURNING id, sender_id, receiver_id, video_id, amount, message, created_at`,
@@ -16,7 +19,8 @@ func (r *Repository) CreateDonation(donation domain.Donation) (domain.Donation, 
 		donation.VideoID,
 		donation.Amount,
 		donation.Message,
-	)
+	).Scan(&dbDonation.ID, &dbDonation.SenderID, &dbDonation.ReceiverID, &dbDonation.VideoID,
+		&dbDonation.Amount, &dbDonation.Message, &dbDonation.CreatedAt)
 	if err != nil {
 		return domain.Donation{}, r.translateError(err)
 	}
@@ -25,8 +29,8 @@ func (r *Repository) CreateDonation(donation domain.Donation) (domain.Donation, 
 }
 
 func (r *Repository) GetSentDonations(senderID int) ([]domain.Donation, error) {
-	var dbDonations []dbModels.Donation
-	err := r.db.Select(&dbDonations, 
+	ctx := context.Background()
+	rows, err := r.db.Query(ctx,
 		`SELECT id, sender_id, receiver_id, video_id, amount, message, created_at
 		FROM donations
 		WHERE sender_id = $1
@@ -34,18 +38,48 @@ func (r *Repository) GetSentDonations(senderID int) ([]domain.Donation, error) {
 	if err != nil {
 		return nil, r.translateError(err)
 	}
+	defer rows.Close()
+
+	var dbDonations []dbModels.Donation
+	for rows.Next() {
+		var donation dbModels.Donation
+		if err := rows.Scan(&donation.ID, &donation.SenderID, &donation.ReceiverID, &donation.VideoID,
+			&donation.Amount, &donation.Message, &donation.CreatedAt); err != nil {
+			return nil, r.translateError(err)
+		}
+		dbDonations = append(dbDonations, donation)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, r.translateError(err)
+	}
 
 	return donationsToDomain(dbDonations), nil
 }
 
 func (r *Repository) GetReceivedDonations(receiverID int) ([]domain.Donation, error) {
-	var dbDonations []dbModels.Donation
-	err := r.db.Select(&dbDonations, 
+	ctx := context.Background()
+	rows, err := r.db.Query(ctx,
 		`SELECT id, sender_id, receiver_id, video_id, amount, message, created_at
 		FROM donations
 		WHERE receiver_id = $1
 		ORDER BY created_at DESC`, receiverID)
 	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	var dbDonations []dbModels.Donation
+	for rows.Next() {
+		var donation dbModels.Donation
+		if err := rows.Scan(&donation.ID, &donation.SenderID, &donation.ReceiverID, &donation.VideoID,
+			&donation.Amount, &donation.Message, &donation.CreatedAt); err != nil {
+			return nil, r.translateError(err)
+		}
+		dbDonations = append(dbDonations, donation)
+	}
+
+	if err := rows.Err(); err != nil {
 		return nil, r.translateError(err)
 	}
 

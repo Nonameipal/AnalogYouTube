@@ -1,0 +1,940 @@
+{
+  "info": {
+    "_postman_id": "analogyoutube-collection",
+    "name": "AnalogYouTube API",
+    "description": "API Collection for AnalogYouTube - YouTube Clone Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Ping",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/ping",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["ping"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sign Up (Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/auth/sign-up",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["auth", "sign-up"]
+            }
+          }
+        },
+        {
+          "name": "Sign In (Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_doe\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/auth/sign-in",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["auth", "sign-in"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{refresh_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/auth/refresh",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Sign Up (API)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jane_doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password456\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "register"]
+            }
+          }
+        },
+        {
+          "name": "Sign In (API)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jane_doe\",\n  \"password\": \"password456\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jane_doe_updated\",\n  \"email\": \"jane.updated@example.com\",\n  \"avatar_url\": \"https://example.com/avatar.jpg\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "me"]
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get User Videos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/videos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "videos"]
+            }
+          }
+        },
+        {
+          "name": "Get User Donations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/donations",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "donations"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscribers Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/subscribers/count",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "subscribers", "count"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscriptions Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/subscriptions/count",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "subscriptions", "count"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Videos",
+      "item": [
+        {
+          "name": "Get Recommended Videos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/videos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos"]
+            }
+          }
+        },
+        {
+          "name": "Search Videos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/search?title=golang",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "search"],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "golang"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Video By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get All Videos (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/allvideos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "allvideos"]
+            }
+          }
+        },
+        {
+          "name": "Create Video",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My First Video\",\n  \"description\": \"This is my first video about Golang\",\n  \"video_url\": \"https://example.com/video.mp4\",\n  \"thumbnail_url\": \"https://example.com/thumbnail.jpg\",\n  \"category_id\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/videos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos"]
+            }
+          }
+        },
+        {
+          "name": "Update Video",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Video Title\",\n  \"description\": \"Updated description\",\n  \"video_url\": \"https://example.com/video-updated.mp4\",\n  \"thumbnail_url\": \"https://example.com/thumbnail-updated.jpg\",\n  \"category_id\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Video",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Likes",
+      "item": [
+        {
+          "name": "Like Video",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/like",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "like"]
+            }
+          }
+        },
+        {
+          "name": "Unlike Video",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/like",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "like"]
+            }
+          }
+        },
+        {
+          "name": "Check If Video Liked By Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/liked",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "liked"]
+            }
+          }
+        },
+        {
+          "name": "Get Video Likes Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/likes/count",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "likes", "count"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Get Video Comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Great video! Very helpful.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/videos/1/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "videos", "1", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated comment text\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/comments/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "comments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/comments/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "comments", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Subscribe to User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/subscribe",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "subscribe"]
+            }
+          }
+        },
+        {
+          "name": "Unsubscribe from User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/subscribe",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "subscribe"]
+            }
+          }
+        },
+        {
+          "name": "Check If Subscribed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/users/1/subscribed",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "users", "1", "subscribed"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/categories",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Category By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:6666/api/categories/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Category (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Technology\",\n  \"description\": \"Technology related videos\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/categories",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Update Category (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Technology Updated\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/categories/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Category (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/categories/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "categories", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Donations",
+      "item": [
+        {
+          "name": "Create Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 10.50,\n  \"recipient_id\": 2,\n  \"message\": \"Great content!\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/donations",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "donations"]
+            }
+          }
+        },
+        {
+          "name": "Get Sent Donations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/donations/sent",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "donations", "sent"]
+            }
+          }
+        },
+        {
+          "name": "Get Received Donations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/donations/received",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "donations", "received"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chats",
+      "item": [
+        {
+          "name": "Get My Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/chats",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "chats"]
+            }
+          }
+        },
+        {
+          "name": "Create or Get Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"other_user_id\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/chats",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "chats"]
+            }
+          }
+        },
+        {
+          "name": "Get Chat Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:6666/api/chats/1/messages",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "chats", "1", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Create Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hello! How are you?\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:6666/api/chats/1/messages",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["api", "chats", "1", "messages"]
+            }
+          }
+        },
+        {
+          "name": "WebSocket Chat",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "ws://localhost:6666/ws/chats/1",
+              "protocol": "ws",
+              "host": ["localhost"],
+              "port": "6666",
+              "path": ["ws", "chats", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(subscriber_id, author_id),
-    CHECK (subscriber_id <> author_id)
+    CHECK (subscriber_id != author_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_subscriptions_subscriber_id ON subscriptions(subscriber_id);

@@ -7,19 +7,21 @@ type ServiceI interface {
 	Authenticate(user domain.User) (int, string, error)
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(userID int, user domain.User) (domain.User, error)
+	GetUserProfile(userID int) (domain.UserProfile, error)
 
 	CreateVideo(authorID int, video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
 	GetUserVideos(userID int) ([]domain.Video, error)
+	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error)
 	DeleteVideo(userID int, userRole string, videoID int) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
-	GetCategoryByID(id int) (domain.Category, error)
+	GetCategoryByName(name string) (domain.Category, error)
 	UpdateCategory(category domain.Category) (domain.Category, error)
 	DeleteCategory(id int) error
 
@@ -43,4 +45,10 @@ type ServiceI interface {
 	GetVideoComments(videoID int) ([]domain.Comment, error)
 	UpdateComment(userID int, userRole string, comment domain.Comment) (domain.Comment, error)
 	DeleteComment(userID int, userRole string, commentID int) error
+
+	CreateOrGetChat(userID int, secondUserID int) (domain.Chat, error)
+	GetUserChats(userID int) ([]domain.Chat, error)
+	GetChatMessages(userID int, chatID int) ([]domain.ChatMessage, error)
+	CreateChatMessage(userID int, chatID int, message domain.ChatMessage) (domain.ChatMessage, error)
+	EnsureUserCanAccessChat(userID int, chatID int) error
 }
