@@ -23,7 +23,8 @@ func (ctrl *Controller) handleError(w http.ResponseWriter, err error) {
 		errors.Is(err, errs.ErrVideoNotFound) ||
 		errors.Is(err, errs.ErrCommentNotFound) ||
 		errors.Is(err, errs.ErrCategoryNotFound) ||
-		errors.Is(err, errs.ErrChatNotFound):
+		errors.Is(err, errs.ErrChatNotFound) ||
+		errors.Is(err, errs.ErrPlaylistNotFound):
 		writeJSON(w, http.StatusNotFound, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrInvalidRequestBody) ||
 		errors.Is(err, errs.ErrInvalidFieldValue) ||

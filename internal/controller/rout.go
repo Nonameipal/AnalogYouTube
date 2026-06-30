@@ -40,6 +40,9 @@ func (ctrl *Controller) InitRoutes() error {
 		api.HandleFunc("/users/{id}/donations", ctrl.GetUserDonations).Methods(http.MethodGet)
 		api.HandleFunc("/users/{id}/subscribers/count", ctrl.GetSubscribersCount).Methods(http.MethodGet)
 		api.HandleFunc("/users/{id}/subscriptions/count", ctrl.GetSubscriptionsCount).Methods(http.MethodGet)
+
+		api.HandleFunc("/users/{id}/playlists", ctrl.GetUserPlaylists).Methods(http.MethodGet)
+		api.HandleFunc("/playlists/{id}", ctrl.GetPlaylistByID).Methods(http.MethodGet)
 	}
 
 	auth = api.PathPrefix("").Subrouter()
@@ -72,6 +75,12 @@ func (ctrl *Controller) InitRoutes() error {
 		auth.HandleFunc("/chats", ctrl.GetMyChats).Methods(http.MethodGet)
 		auth.HandleFunc("/chats/{id}/messages", ctrl.GetChatMessages).Methods(http.MethodGet)
 		auth.HandleFunc("/chats/{id}/messages", ctrl.CreateChatMessage).Methods(http.MethodPost)
+
+		auth.HandleFunc("/playlists", ctrl.CreatePlaylist).Methods(http.MethodPost)
+        auth.HandleFunc("/playlists/{id}", ctrl.UpdatePlaylist).Methods(http.MethodPut)
+        auth.HandleFunc("/playlists/{id}", ctrl.DeletePlaylist).Methods(http.MethodDelete)
+        auth.HandleFunc("/playlists/{id}/videos", ctrl.AddVideoToPlaylist).Methods(http.MethodPost)
+        auth.HandleFunc("/playlists/{id}/videos/{video_id}", ctrl.RemoveVideoFromPlaylist).Methods(http.MethodDelete)
 	}
 
 	admin := api.PathPrefix("").Subrouter()

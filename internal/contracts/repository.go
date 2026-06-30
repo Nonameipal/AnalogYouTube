@@ -54,4 +54,13 @@ type RepositoryI interface {
 	GetUserChats(userID int) ([]domain.Chat, error)
 	CreateChatMessage(message domain.ChatMessage) (domain.ChatMessage, error)
 	GetChatMessages(chatID int) ([]domain.ChatMessage, error)
+
+	CreatePlaylist(playlist domain.Playlist) (domain.Playlist, error)
+    GetPlaylistByID(id int) (domain.Playlist, error)
+    GetUserPlaylists(userID int) ([]domain.Playlist, error)
+    UpdatePlaylist(playlist domain.Playlist) (domain.Playlist, error)
+    DeletePlaylist(id int) error
+    AddVideoToPlaylist(playlistID int, videoID int) error
+    RemoveVideoFromPlaylist(playlistID int, videoID int) error
+    GetPlaylistVideos(playlistID int) ([]domain.Video, error)
 }

@@ -51,4 +51,12 @@ type ServiceI interface {
 	GetChatMessages(userID int, chatID int) ([]domain.ChatMessage, error)
 	CreateChatMessage(userID int, chatID int, message domain.ChatMessage) (domain.ChatMessage, error)
 	EnsureUserCanAccessChat(userID int, chatID int) error
+
+	CreatePlaylist(userID int, playlist domain.Playlist) (domain.Playlist, error)
+    GetPlaylistByID(id int) (domain.Playlist, error)
+    GetUserPlaylists(userID int) ([]domain.Playlist, error)
+    UpdatePlaylist(userID int, userRole string, playlist domain.Playlist) (domain.Playlist, error)
+    DeletePlaylist(userID int, userRole string, playlistID int) error
+    AddVideoToPlaylist(userID int, userRole string, playlistID int, videoID int) error
+    RemoveVideoFromPlaylist(userID int, userRole string, playlistID int, videoID int) error
 }
