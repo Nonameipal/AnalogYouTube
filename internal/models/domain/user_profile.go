@@ -10,6 +10,8 @@ type UserProfile struct {
 	Description string `json:"description"`
 	SubscribersCount int `json:"subscribers_count"`
 	SubscriptionsCount int `json:"subscriptions_count"`
+	Subscribers *[]User `json:"subcribers,omitempty"`
+	Subscriptions *[]User `json:"subscriptions,omitempty"`
 	Videos []Video `json:"videos"`
 	Role string `json:"role"`
 	CreatedAt time.Time `json:"created_at"`

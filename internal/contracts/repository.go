@@ -40,6 +40,8 @@ type RepositoryI interface {
 	GetSubscribersCount(authorID int) (int, error)
 	GetSubscriptionsCount(subscriberID int) (int, error)
 	IsSubscribed(subscriberID int, authorID int) (bool, error)
+	GetSubscribers(authorID int) ([]domain.User, error)
+	GetSubscriptions(subscriberID int) ([]domain.User, error)
 
 	CreateComment(comment domain.Comment) (domain.Comment, error)
 	GetVideoComments(videoID int) ([]domain.Comment, error)

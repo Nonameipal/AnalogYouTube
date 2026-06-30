@@ -126,7 +126,7 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 	return s.repository.UpdateUserProfile(user)
 }
 
-func (s *Service) GetUserProfile(userID int) (domain.UserProfile, error) {
+func (s *Service) GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error) {
 	if userID <= 0 {
 		return domain.UserProfile{}, errs.ErrInvalidFieldValue
 	}
@@ -151,17 +151,34 @@ func (s *Service) GetUserProfile(userID int) (domain.UserProfile, error) {
 		return domain.UserProfile{}, err
 	}
 
-	return domain.UserProfile{
-		ID: user.ID,
-		Username: user.Username,
-		Email: user.Email,
-		Role: user.Role,
-		AvatarURL: user.AvatarURL,
-		Description: user.Description,
-		SubscribersCount: subscribersCount,
+	profile := domain.UserProfile{
+		ID:                 user.ID,
+		Username:           user.Username,
+		Email:              user.Email,
+		Role:               user.Role,
+		AvatarURL:          user.AvatarURL,
+		Description:        user.Description,
+		SubscribersCount:   subscribersCount,
 		SubscriptionsCount: subscriptionsCount,
-		Videos: videos,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}, nil
+		Videos:             videos,
+		CreatedAt:          user.CreatedAt,
+		UpdatedAt:          user.UpdatedAt,
+	}
+
+	if viewerID != nil && *viewerID == userID {
+		subscribers, err := s.repository.GetSubscribers(userID)
+		if err != nil {
+			return domain.UserProfile{}, err
+		}
+
+		subscriptions, err := s.repository.GetSubscriptions(userID)
+		if err != nil {
+			return domain.UserProfile{}, err
+		}
+
+		profile.Subscribers = &subscribers
+		profile.Subscriptions = &subscriptions
+	}
+
+	return profile, nil
 }

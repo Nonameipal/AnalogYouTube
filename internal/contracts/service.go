@@ -7,7 +7,7 @@ type ServiceI interface {
 	Authenticate(user domain.User) (int, string, error)
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(userID int, user domain.User) (domain.User, error)
-	GetUserProfile(userID int) (domain.UserProfile, error)
+	GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error)
 
 	CreateVideo(authorID int, video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)

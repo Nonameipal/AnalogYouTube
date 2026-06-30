@@ -1,6 +1,111 @@
 package repository
 
-import "context"
+import (
+	"context"
+	"database/sql"
+	"github.com/Nonameipal/AnalogYouTube/internal/models/domain"
+
+)
+
+
+func (r *Repository) GetSubscribers(authorID int) ([]domain.User, error) {
+	ctx := context.Background()
+
+	rows, err := r.db.Query(ctx,
+		`SELECT u.id, u.username, u.email, u.role, u.avatar_url, u.description, u.created_at, u.updated_at
+		FROM subscriptions s
+		JOIN users u ON u.id = s.subscriber_id
+		WHERE s.author_id = $1
+		ORDER BY s.created_at DESC`, authorID)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	users := make([]domain.User, 0)
+	for rows.Next() {
+		var user domain.User
+		var email sql.NullString
+		var avatarURL sql.NullString
+		var description sql.NullString
+
+		err = rows.Scan(
+			&user.ID,
+			&user.Username,
+			&email,
+			&user.Role,
+			&avatarURL,
+			&description,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		)
+		if err != nil {
+			return nil, r.translateError(err)
+		}
+
+		user.Email = email.String
+		user.AvatarURL = avatarURL.String
+		user.Description = description.String
+
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, r.translateError(err)
+	}
+
+	return users, nil
+}
+
+
+func (r *Repository) GetSubscriptions(subscriberID int) ([]domain.User, error) {
+	ctx := context.Background()
+
+	rows, err := r.db.Query(ctx,
+		`SELECT u.id, u.username, u.email, u.role, u.avatar_url, u.description, u.created_at, u.updated_at
+		FROM subscriptions s
+		JOIN users u ON u.id = s.author_id
+		WHERE s.subscriber_id = $1
+		ORDER BY s.created_at DESC`, subscriberID)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	users := make([]domain.User, 0)
+	for rows.Next() {
+		var user domain.User
+		var email sql.NullString
+		var avatarURL sql.NullString
+		var description sql.NullString
+
+		err = rows.Scan(
+			&user.ID,
+			&user.Username,
+			&email,
+			&user.Role,
+			&avatarURL,
+			&description,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		)
+		if err != nil {
+			return nil, r.translateError(err)
+		}
+
+		user.Email = email.String
+		user.AvatarURL = avatarURL.String
+		user.Description = description.String
+
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, r.translateError(err)
+	}
+
+	return users, nil
+}
 
 func (r *Repository) SubscribeToUser(subscriberID int, authorID int) error {
 	ctx := context.Background()
