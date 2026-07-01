@@ -32,8 +32,6 @@ func ReadSettings() error {
 	if err = json.NewDecoder(configFile).Decode(&AppSettings); err != nil {
 		return fmt.Errorf("couldn't decode settings json file: %w", err)
 	}
-
-	// Environment variables have priority over configs.json.
 	if value := os.Getenv("JWT_SECRET"); value != "" {
 		AppSettings.AuthParams.JwtSecret = value
 	}
