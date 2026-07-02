@@ -84,3 +84,37 @@ func (ctrl *Controller) UpdateMe(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, user)
 }
+
+func (ctrl *Controller) UploadMyAvatar(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		ctrl.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+
+	file, header, err := r.FormFile("avatar")
+	if err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+	defer file.Close()
+
+	avatarURL, err := ctrl.storage.SaveFile(file, header, "avatars")
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	user, err := ctrl.service.UpdateUserAvatar(userID, avatarURL)
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, user)
+}

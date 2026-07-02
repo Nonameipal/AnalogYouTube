@@ -256,3 +256,36 @@ func (r *Repository) SearchVideosByTitle(title string) ([]domain.Video, error) {
 
 	return videos, nil
 }
+
+func (r *Repository) UpdateVideoThumbnail(videoID int, thumbnailURL string) (domain.Video, error) {
+	ctx := context.Background()
+	var dbVideo dbModels.Video
+
+	err := r.db.QueryRow(ctx,
+		`UPDATE videos
+		SET thumbnail_url = NULLIF($1, ''),
+		    updated_at = CURRENT_TIMESTAMP
+		WHERE id = $2 AND status = $3
+		RETURNING id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
+		thumbnailURL,
+		videoID,
+		domain.VideoStatusActive,
+	).Scan(
+		&dbVideo.ID,
+		&dbVideo.AuthorID,
+		&dbVideo.CategoryID,
+		&dbVideo.Title,
+		&dbVideo.Description,
+		&dbVideo.VideoURL,
+		&dbVideo.ThumbnailURL,
+		&dbVideo.Views,
+		&dbVideo.Status,
+		&dbVideo.CreatedAt,
+		&dbVideo.UpdatedAt,
+	)
+	if err != nil {
+		return domain.Video{}, r.translateError(err)
+	}
+
+	return dbVideo.ToDomain(), nil
+}

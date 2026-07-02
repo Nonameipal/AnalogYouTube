@@ -8,6 +8,7 @@ type RepositoryI interface {
 	GetUserByEmail(email string) (domain.User, error)
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(user domain.User) (domain.User, error)
+	UpdateUserAvatar(userID int, avatarURL string) (domain.User, error)
 
 	CreateVideo(video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
@@ -17,6 +18,7 @@ type RepositoryI interface {
 	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
+	UpdateVideoThumbnail(videoID int, thumbnailURL string) (domain.Video, error)
 	DeleteVideo(id int) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)

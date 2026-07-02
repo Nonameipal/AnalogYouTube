@@ -180,3 +180,30 @@ func (s *Service) SearchVideosByTitle(title string) ([]domain.Video, error) {
 
 	return s.repository.SearchVideosByTitle(title)
 }
+
+func (s *Service) UpdateVideoThumbnail(userID int, userRole string, videoID int, thumbnailURL string) (domain.Video, error) {
+	thumbnailURL = strings.TrimSpace(thumbnailURL)
+
+	if userID <= 0 || videoID <= 0 || thumbnailURL == "" {
+		return domain.Video{}, errs.ErrInvalidFieldValue
+	}
+
+	video, err := s.GetVideoByID(videoID)
+	if err != nil {
+		return domain.Video{}, err
+	}
+
+	if video.AuthorID != userID && userRole != domain.AdminRole {
+		return domain.Video{}, errs.ErrAccessDenied
+	}
+
+	updatedVideo, err := s.repository.UpdateVideoThumbnail(videoID, thumbnailURL)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return domain.Video{}, errs.ErrVideoNotFound
+		}
+		return domain.Video{}, err
+	}
+
+	return updatedVideo, nil
+}

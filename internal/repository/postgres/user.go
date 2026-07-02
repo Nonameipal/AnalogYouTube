@@ -100,3 +100,33 @@ func (r *Repository) UpdateUserProfile(user domain.User) (domain.User, error) {
 
 	return dbUser.ToDomain(), nil
 }
+
+func (r *Repository) UpdateUserAvatar(userID int, avatarURL string) (domain.User, error) {
+	ctx := context.Background()
+	var dbUser dbModels.User
+
+	err := r.db.QueryRow(ctx,
+		`UPDATE users
+		SET avatar_url = NULLIF($1, ''),
+		    updated_at = CURRENT_TIMESTAMP
+		WHERE id = $2
+		RETURNING id, username, email, password, role, avatar_url, description, created_at, updated_at`,
+		avatarURL,
+		userID,
+	).Scan(
+		&dbUser.ID,
+		&dbUser.Username,
+		&dbUser.Email,
+		&dbUser.Password,
+		&dbUser.Role,
+		&dbUser.AvatarURL,
+		&dbUser.Description,
+		&dbUser.CreatedAt,
+		&dbUser.UpdatedAt,
+	)
+	if err != nil {
+		return domain.User{}, r.translateError(err)
+	}
+
+	return dbUser.ToDomain(), nil
+}

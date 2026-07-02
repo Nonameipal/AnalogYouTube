@@ -169,3 +169,49 @@ func getIDFromRequest(r *http.Request, key string) (int, error) {
 
 	return id, nil
 }
+
+func (ctrl *Controller) UploadVideoThumbnail(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		ctrl.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	userRole, ok := getUserRoleFromContext(r)
+	if !ok {
+		ctrl.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	videoID, err := getIDFromRequest(r, "id")
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	if err = r.ParseMultipartForm(10 << 20); err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+
+	file, header, err := r.FormFile("thumbnail")
+	if err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+	defer file.Close()
+
+	thumbnailURL, err := ctrl.storage.SaveFile(file, header, "thumbnails")
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	video, err := ctrl.service.UpdateVideoThumbnail(userID, userRole, videoID, thumbnailURL)
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, video)
+}

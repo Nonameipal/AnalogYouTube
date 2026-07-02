@@ -8,7 +8,7 @@ type ServiceI interface {
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(userID int, user domain.User) (domain.User, error)
 	GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error)
-
+	UpdateUserAvatar(userID int, avatarURL string) (domain.User, error)
 	CreateVideo(authorID int, video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
@@ -17,6 +17,7 @@ type ServiceI interface {
 	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error)
+	UpdateVideoThumbnail(userID int, userRole string, videoID int, thumbnailURL string) (domain.Video, error)
 	DeleteVideo(userID int, userRole string, videoID int) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)

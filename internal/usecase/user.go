@@ -182,3 +182,25 @@ func (s *Service) GetUserProfile(userID int, viewerID *int) (domain.UserProfile,
 
 	return profile, nil
 }
+
+func (s *Service) UpdateUserAvatar(userID int, avatarURL string) (domain.User, error) {
+	avatarURL = strings.TrimSpace(avatarURL)
+
+	if userID <= 0 || avatarURL == "" {
+		return domain.User{}, errs.ErrInvalidFieldValue
+	}
+
+	if _, err := s.GetUserByID(userID); err != nil {
+		return domain.User{}, err
+	}
+
+	user, err := s.repository.UpdateUserAvatar(userID, avatarURL)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return domain.User{}, errs.ErrUserNotFound
+		}
+		return domain.User{}, err
+	}
+
+	return user, nil
+}

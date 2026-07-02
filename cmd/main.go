@@ -7,6 +7,7 @@ import (
 	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
 	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres"
 	"github.com/Nonameipal/AnalogYouTube/internal/usecase"
+	"github.com/Nonameipal/AnalogYouTube/internal/infrastructure/storage"
 )
 
 func main() {
@@ -32,7 +33,8 @@ func main() {
 
 	repo := postgres.NewRepository(pgxpool)
 	svc := usecase.NewService(repo)
-	ctrl := httpdelivery.NewController(svc)
+	fileStorage := storage.NewVideoStorage("uploads", "uploads")
+	ctrl := httpdelivery.NewController(svc, fileStorage)
 
 	if err = ctrl.InitRoutes(); err != nil {
 		logger.Error().Err(err).Msg("error during http-service initialization")

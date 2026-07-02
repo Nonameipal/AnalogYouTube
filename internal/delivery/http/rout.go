@@ -50,10 +50,12 @@ func (ctrl *Controller) InitRoutes() error {
 	{
 		auth.HandleFunc("/me", ctrl.Me).Methods(http.MethodGet)
 		auth.HandleFunc("/me", ctrl.UpdateMe).Methods(http.MethodPut)
+		auth.HandleFunc("/me/avatar", ctrl.UploadMyAvatar).Methods(http.MethodPost)
 
 		auth.HandleFunc("/videos", ctrl.CreateVideo).Methods(http.MethodPost)
 		auth.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
 		auth.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
+		auth.HandleFunc("/videos/{id}/thumbnail", ctrl.UploadVideoThumbnail).Methods(http.MethodPost)
 
 		auth.HandleFunc("/videos/{id}/like", ctrl.LikeVideo).Methods(http.MethodPost)
 		auth.HandleFunc("/videos/{id}/like", ctrl.UnlikeVideo).Methods(http.MethodDelete)
@@ -91,6 +93,9 @@ func (ctrl *Controller) InitRoutes() error {
 		admin.HandleFunc("/categories/{id}", ctrl.DeleteCategory).Methods(http.MethodDelete)
 		admin.HandleFunc("/videos/allvideos", ctrl.GetAllVideos).Methods(http.MethodGet)
 	}
+
+	uploadsHandler := http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads")))
+	r.PathPrefix("/uploads/").Handler(uploadsHandler)
 
 	r.HandleFunc("/ws/chats/{id}", ctrl.ChatWebSocket).Methods(http.MethodGet)
 

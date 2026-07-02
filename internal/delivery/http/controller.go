@@ -6,14 +6,19 @@ import (
 
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 	"github.com/Nonameipal/AnalogYouTube/internal/usecase/ports"
+	"github.com/Nonameipal/AnalogYouTube/internal/infrastructure/storage"
 )
 
 type Controller struct {
 	service ports.ServiceI
+	storage *storage.VideoStorage
 }
 
-func NewController(svc ports.ServiceI) *Controller {
-	return &Controller{service: svc}
+func NewController(svc ports.ServiceI, storage *storage.VideoStorage) *Controller {
+	return &Controller{
+		service: svc,
+		storage: storage,
+	}
 }
 
 func (ctrl *Controller) handleError(w http.ResponseWriter, err error) {
