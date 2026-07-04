@@ -20,6 +20,8 @@ type ServiceI interface {
 	UpdateVideoThumbnail(userID int, userRole string, videoID int, thumbnailURL string) (domain.Video, error)
 	DeleteVideo(userID int, userRole string, videoID int) error
 
+	GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error)
+
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
 	GetCategoryByName(name string) (domain.Category, error)

@@ -56,6 +56,7 @@ func (ctrl *Controller) InitRoutes() error {
 		auth.HandleFunc("/videos/{id}", ctrl.UpdateVideo).Methods(http.MethodPut)
 		auth.HandleFunc("/videos/{id}", ctrl.DeleteVideo).Methods(http.MethodDelete)
 		auth.HandleFunc("/videos/{id}/thumbnail", ctrl.UploadVideoThumbnail).Methods(http.MethodPost)
+		auth.HandleFunc("/videos/upload", ctrl.UploadVideoFile).Methods(http.MethodPost)
 
 		auth.HandleFunc("/videos/{id}/like", ctrl.LikeVideo).Methods(http.MethodPost)
 		auth.HandleFunc("/videos/{id}/like", ctrl.UnlikeVideo).Methods(http.MethodDelete)

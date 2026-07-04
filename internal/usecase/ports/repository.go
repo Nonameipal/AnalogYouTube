@@ -19,6 +19,8 @@ type RepositoryI interface {
 	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
 	UpdateVideoThumbnail(videoID int, thumbnailURL string) (domain.Video, error)
+	CreateVideoQuality(quality domain.VideoQuality) (domain.VideoQuality, error)
+    GetVideoQualities(videoID int) ([]domain.VideoQuality, error)
 	DeleteVideo(id int) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)

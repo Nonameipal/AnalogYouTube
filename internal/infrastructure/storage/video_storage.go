@@ -43,3 +43,19 @@ func (s *VideoStorage) SaveFile(file multipart.File, header *multipart.FileHeade
 
 	return "/" + filepath.ToSlash(filepath.Join(s.BaseURL, folder, fileName)), nil
 }
+
+func (s *VideoStorage) URLPath(fileURL string) string {
+	cleanURL := strings.TrimPrefix(fileURL, "/")
+	cleanURL = strings.TrimPrefix(cleanURL, s.BaseURL)
+
+	return filepath.Join(s.BasePath, cleanURL)
+}
+
+func (s *VideoStorage) VideoQualitiesPaths(videoID int) (string, string) {
+	folder := fmt.Sprintf("videos/%d", videoID)
+
+	outputDir := filepath.Join(s.BasePath, folder)
+	outputURLPrefix := "/" + filepath.ToSlash(filepath.Join(s.BaseURL, folder))
+
+	return outputDir, outputURLPrefix
+}

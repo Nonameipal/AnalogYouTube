@@ -207,3 +207,38 @@ func (s *Service) UpdateVideoThumbnail(userID int, userRole string, videoID int,
 
 	return updatedVideo, nil
 }
+
+func (s *Service) GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error) {
+	if userID <= 0 || videoID <= 0 || inputPath == "" || outputDir == "" || outputURLPrefix == "" {
+		return nil, errs.ErrInvalidFieldValue
+	}
+
+	video, err := s.GetVideoByID(videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	if video.AuthorID != userID && userRole != domain.AdminRole {
+		return nil, errs.ErrAccessDenied
+	}
+
+	qualities, err := s.ffmpegSettings.GenerateVideoQualities(inputPath, outputDir, outputURLPrefix)
+	if err != nil {
+		return nil, err
+	}
+
+	savedQualities := make([]domain.VideoQuality, 0, len(qualities))
+
+	for _, quality := range qualities {
+		quality.VideoID = videoID
+
+		savedQuality, err := s.repository.CreateVideoQuality(quality)
+		if err != nil {
+			return nil, err
+		}
+
+		savedQualities = append(savedQualities, savedQuality)
+	}
+
+	return savedQualities, nil
+}

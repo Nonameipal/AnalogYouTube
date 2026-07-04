@@ -8,6 +8,7 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres"
 	"github.com/Nonameipal/AnalogYouTube/internal/usecase"
 	"github.com/Nonameipal/AnalogYouTube/internal/infrastructure/storage"
+	"github.com/Nonameipal/AnalogYouTube/internal/infrastructure/ffmpeg"
 )
 
 func main() {
@@ -32,7 +33,8 @@ func main() {
 	}()
 
 	repo := postgres.NewRepository(pgxpool)
-	svc := usecase.NewService(repo)
+	mediaProcessor := ffmpeg.NewFFmpegSettings("ffmpeg")
+    svc := usecase.NewService(repo, mediaProcessor)
 	fileStorage := storage.NewVideoStorage("uploads", "uploads")
 	ctrl := httpdelivery.NewController(svc, fileStorage)
 

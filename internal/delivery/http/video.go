@@ -215,3 +215,68 @@ func (ctrl *Controller) UploadVideoThumbnail(w http.ResponseWriter, r *http.Requ
 
 	writeJSON(w, http.StatusOK, video)
 }
+
+func (ctrl *Controller) UploadVideoFile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		ctrl.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	if err := r.ParseMultipartForm(500 << 20); err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+
+	title := r.FormValue("title")
+	description := r.FormValue("description")
+	categoryName := r.FormValue("category_name")
+
+	file, header, err := r.FormFile("video")
+	if err != nil {
+		ctrl.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+	defer file.Close()
+
+	videoURL, err := ctrl.storage.SaveFile(file, header, "videos/originals")
+	if err != nil {
+		ctrl.handleError(w, err)
+		return
+	}
+
+	var categoryNamePointer *string
+	if categoryName != "" {
+		categoryNamePointer = &categoryName
+	}
+
+	video, err := ctrl.service.CreateVideo(userID, domain.Video{
+	Title: title,
+	Description: description,
+	VideoURL: videoURL,
+	CategoryName: categoryNamePointer,
+})
+if err != nil {
+	ctrl.handleError(w, err)
+	return
+}
+
+userRole, ok := getUserRoleFromContext(r)
+if !ok {
+	ctrl.handleError(w, errs.ErrInvalidToken)
+	return
+}
+
+inputPath := ctrl.storage.URLPath(video.VideoURL)
+outputDir, outputURLPrefix := ctrl.storage.VideoQualitiesPaths(video.ID)
+
+qualities, err := ctrl.service.GenerateVideoQualities(userID, userRole, video.ID, inputPath, outputDir, outputURLPrefix)
+if err != nil {
+	ctrl.handleError(w, err)
+	return
+}
+
+video.Qualities = qualities
+
+writeJSON(w, http.StatusCreated, video)
+}

@@ -18,6 +18,7 @@ type Video struct {
 	ThumbnailURL string `json:"thumbnail_url"`
 	Views int64 `json:"views"`
 	Status string `json:"status"`
+	Qualities []VideoQuality `json:"qualities,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
