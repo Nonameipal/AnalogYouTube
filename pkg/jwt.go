@@ -10,17 +10,17 @@ import (
 
 type CustomClaims struct {
 	jwt.RegisteredClaims
-	UserID int `json:"user_id"`
-	Role string `json:"role"`
-	IsRefresh bool `json:"is_refresh"`
+	UserID    int    `json:"user_id"`
+	Role      string `json:"role"`
+	IsRefresh bool   `json:"is_refresh"`
 }
 
 func GenerateToken(userID int, ttl int, role string, isRefresh bool) (string, error) {
 	claims := CustomClaims{
 		RegisteredClaims: jwt.RegisteredClaims{},
-		UserID: userID,
-		IsRefresh: isRefresh,
-		Role: role,
+		UserID:           userID,
+		IsRefresh:        isRefresh,
+		Role:             role,
 	}
 
 	if isRefresh {

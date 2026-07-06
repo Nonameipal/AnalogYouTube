@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
-	dbModels "github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
+	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
 )
 
 func (r *Repository) CreateUser(user domain.User) error {
@@ -28,7 +28,7 @@ func (r *Repository) CreateUser(user domain.User) error {
 
 func (r *Repository) GetUserByUsername(username string) (domain.User, error) {
 	ctx := context.Background()
-	var dbUser dbModels.User
+	var dbUser dbmodel.User
 	err := r.db.QueryRow(ctx,
 		`SELECT id, username, email, password, role, avatar_url, description, created_at, updated_at
 		FROM users
@@ -44,7 +44,7 @@ func (r *Repository) GetUserByUsername(username string) (domain.User, error) {
 
 func (r *Repository) GetUserByEmail(email string) (domain.User, error) {
 	ctx := context.Background()
-	var dbUser dbModels.User
+	var dbUser dbmodel.User
 	err := r.db.QueryRow(ctx,
 		`SELECT id, username, email, password, role, avatar_url, description, created_at, updated_at
 		FROM users
@@ -60,7 +60,7 @@ func (r *Repository) GetUserByEmail(email string) (domain.User, error) {
 
 func (r *Repository) GetUserByID(id int) (domain.User, error) {
 	ctx := context.Background()
-	var dbUser dbModels.User
+	var dbUser dbmodel.User
 	err := r.db.QueryRow(ctx,
 		`SELECT id, username, email, password, role, avatar_url, description, created_at, updated_at
 		FROM users
@@ -76,7 +76,7 @@ func (r *Repository) GetUserByID(id int) (domain.User, error) {
 
 func (r *Repository) UpdateUserProfile(user domain.User) (domain.User, error) {
 	ctx := context.Background()
-	var dbUser dbModels.User
+	var dbUser dbmodel.User
 	err := r.db.QueryRow(ctx,
 		`UPDATE users
 		SET username = $1,
@@ -94,36 +94,6 @@ func (r *Repository) UpdateUserProfile(user domain.User) (domain.User, error) {
 	).Scan(
 		&dbUser.ID, &dbUser.Username, &dbUser.Email, &dbUser.Password, &dbUser.Role,
 		&dbUser.AvatarURL, &dbUser.Description, &dbUser.CreatedAt, &dbUser.UpdatedAt)
-	if err != nil {
-		return domain.User{}, r.translateError(err)
-	}
-
-	return dbUser.ToDomain(), nil
-}
-
-func (r *Repository) UpdateUserAvatar(userID int, avatarURL string) (domain.User, error) {
-	ctx := context.Background()
-	var dbUser dbModels.User
-
-	err := r.db.QueryRow(ctx,
-		`UPDATE users
-		SET avatar_url = NULLIF($1, ''),
-		    updated_at = CURRENT_TIMESTAMP
-		WHERE id = $2
-		RETURNING id, username, email, password, role, avatar_url, description, created_at, updated_at`,
-		avatarURL,
-		userID,
-	).Scan(
-		&dbUser.ID,
-		&dbUser.Username,
-		&dbUser.Email,
-		&dbUser.Password,
-		&dbUser.Role,
-		&dbUser.AvatarURL,
-		&dbUser.Description,
-		&dbUser.CreatedAt,
-		&dbUser.UpdatedAt,
-	)
 	if err != nil {
 		return domain.User{}, r.translateError(err)
 	}

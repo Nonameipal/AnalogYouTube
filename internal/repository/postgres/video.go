@@ -146,17 +146,15 @@ func (r *Repository) UpdateVideo(video domain.Video) (domain.Video, error) {
 		`UPDATE videos
 		SET title = $1,
 		    description = NULLIF($2, ''),
-		    video_url = $3,
-		    thumbnail_url = NULLIF($4, ''),
-		    category_name = $5,
+		    thumbnail_url = NULLIF($3, ''),
+		    category_id = $4,
 		    updated_at = CURRENT_TIMESTAMP
-		WHERE id = $6 AND status = $7
+		WHERE id = $5 AND status = $6
 		RETURNING id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
 		video.Title,
 		video.Description,
-		video.VideoURL,
 		video.ThumbnailURL,
-		video.CategoryName,
+		video.CategoryID,
 		video.ID,
 		domain.VideoStatusActive,
 	).Scan(
@@ -257,35 +255,27 @@ func (r *Repository) SearchVideosByTitle(title string) ([]domain.Video, error) {
 	return videos, nil
 }
 
-func (r *Repository) UpdateVideoThumbnail(videoID int, thumbnailURL string) (domain.Video, error) {
+func (r *Repository) ArchiveDeletedVideo(id int, archivedVideoURL string) error {
 	ctx := context.Background()
-	var dbVideo dbModels.Video
 
-	err := r.db.QueryRow(ctx,
+	result, err := r.db.Exec(ctx,
 		`UPDATE videos
-		SET thumbnail_url = NULLIF($1, ''),
+		SET archived_video_url = NULLIF($1, ''),
+		    status = $2,
 		    updated_at = CURRENT_TIMESTAMP
-		WHERE id = $2 AND status = $3
-		RETURNING id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at`,
-		thumbnailURL,
-		videoID,
+		WHERE id = $3 AND status = $4`,
+		archivedVideoURL,
+		domain.VideoStatusDeleted,
+		id,
 		domain.VideoStatusActive,
-	).Scan(
-		&dbVideo.ID,
-		&dbVideo.AuthorID,
-		&dbVideo.CategoryID,
-		&dbVideo.Title,
-		&dbVideo.Description,
-		&dbVideo.VideoURL,
-		&dbVideo.ThumbnailURL,
-		&dbVideo.Views,
-		&dbVideo.Status,
-		&dbVideo.CreatedAt,
-		&dbVideo.UpdatedAt,
 	)
 	if err != nil {
-		return domain.Video{}, r.translateError(err)
+		return r.translateError(err)
 	}
 
-	return dbVideo.ToDomain(), nil
+	if result.RowsAffected() == 0 {
+		return errs.ErrNotFound
+	}
+
+	return nil
 }

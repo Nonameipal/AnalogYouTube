@@ -2,13 +2,12 @@ package ports
 
 import "github.com/Nonameipal/AnalogYouTube/internal/domain"
 
-type ServiceI interface {
+type UsecaseI interface {
 	CreateUser(user domain.User) error
 	Authenticate(user domain.User) (int, string, error)
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(userID int, user domain.User) (domain.User, error)
 	GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error)
-	UpdateUserAvatar(userID int, avatarURL string) (domain.User, error)
 	CreateVideo(authorID int, video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
@@ -17,10 +16,11 @@ type ServiceI interface {
 	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error)
-	UpdateVideoThumbnail(userID int, userRole string, videoID int, thumbnailURL string) (domain.Video, error)
 	DeleteVideo(userID int, userRole string, videoID int) error
 
 	GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error)
+	GetPlaybackSpeeds() []float64
+	DeleteVideoWithArchive(userID int, userRole string, videoID int, inputPath string, archivePath string, archiveURL string) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
@@ -49,7 +49,11 @@ type ServiceI interface {
 	UpdateComment(userID int, userRole string, comment domain.Comment) (domain.Comment, error)
 	DeleteComment(userID int, userRole string, commentID int) error
 
-	CreateOrGetChat(userID int, secondUserID int) (domain.Chat, error)
+	SendChatRequest(senderID int, receiverID int) (domain.ChatRequest, error)
+	GetIncomingChatRequests(userID int) ([]domain.ChatRequest, error)
+	GetOutgoingChatRequests(userID int) ([]domain.ChatRequest, error)
+	AcceptChatRequest(userID int, requestID int) (domain.AcceptedChatRequest, error)
+	RejectChatRequest(userID int, requestID int) (domain.ChatRequest, error)
 	GetUserChats(userID int) ([]domain.Chat, error)
 	GetChatMessages(userID int, chatID int) ([]domain.ChatMessage, error)
 	CreateChatMessage(userID int, chatID int, message domain.ChatMessage) (domain.ChatMessage, error)

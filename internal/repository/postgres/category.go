@@ -5,12 +5,12 @@ import (
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
-	dbModels "github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
+	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
 )
 
 func (r *Repository) CreateCategory(category domain.Category) (domain.Category, error) {
 	ctx := context.Background()
-	var dbCategory dbModels.Category
+	var dbCategory dbmodel.Category
 	err := r.db.QueryRow(ctx,
 		`INSERT INTO categories (name, description)
 		VALUES ($1, NULLIF($2, ''))
@@ -36,9 +36,9 @@ func (r *Repository) GetAllCategories() ([]domain.Category, error) {
 	}
 	defer rows.Close()
 
-	var dbCategories []dbModels.Category
+	var dbCategories []dbmodel.Category
 	for rows.Next() {
-		var category dbModels.Category
+		var category dbmodel.Category
 		if err := rows.Scan(&category.ID, &category.Name, &category.Description, &category.CreatedAt, &category.UpdatedAt); err != nil {
 			return nil, r.translateError(err)
 		}
@@ -59,7 +59,7 @@ func (r *Repository) GetAllCategories() ([]domain.Category, error) {
 
 func (r *Repository) GetCategoryByName(name string) (domain.Category, error) {
 	ctx := context.Background()
-	var dbCategory dbModels.Category
+	var dbCategory dbmodel.Category
 	err := r.db.QueryRow(ctx,
 		`SELECT id, name, description, created_at, updated_at
 		FROM categories
@@ -74,7 +74,7 @@ func (r *Repository) GetCategoryByName(name string) (domain.Category, error) {
 
 func (r *Repository) UpdateCategory(category domain.Category) (domain.Category, error) {
 	ctx := context.Background()
-	var dbCategory dbModels.Category
+	var dbCategory dbmodel.Category
 	err := r.db.QueryRow(ctx,
 		`UPDATE categories
 		SET name = $1,

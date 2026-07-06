@@ -5,12 +5,12 @@ import (
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
-	dbModels "github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
+	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
 )
 
 func (r *Repository) CreatePlaylist(playlist domain.Playlist) (domain.Playlist, error) {
 	ctx := context.Background()
-	var dbPlaylist dbModels.Playlist
+	var dbPlaylist dbmodel.Playlist
 
 	err := r.db.QueryRow(ctx,
 		`INSERT INTO playlists (user_id, name, description)
@@ -29,7 +29,7 @@ func (r *Repository) CreatePlaylist(playlist domain.Playlist) (domain.Playlist, 
 
 func (r *Repository) GetPlaylistByID(id int) (domain.Playlist, error) {
 	ctx := context.Background()
-	var dbPlaylist dbModels.Playlist
+	var dbPlaylist dbmodel.Playlist
 
 	err := r.db.QueryRow(ctx,
 		`SELECT id, user_id, name, description, created_at, updated_at
@@ -65,7 +65,7 @@ func (r *Repository) GetUserPlaylists(userID int) ([]domain.Playlist, error) {
 	playlists := make([]domain.Playlist, 0)
 
 	for rows.Next() {
-		var dbPlaylist dbModels.Playlist
+		var dbPlaylist dbmodel.Playlist
 
 		err = rows.Scan(
 			&dbPlaylist.ID,
@@ -91,7 +91,7 @@ func (r *Repository) GetUserPlaylists(userID int) ([]domain.Playlist, error) {
 
 func (r *Repository) UpdatePlaylist(playlist domain.Playlist) (domain.Playlist, error) {
 	ctx := context.Background()
-	var dbPlaylist dbModels.Playlist
+	var dbPlaylist dbmodel.Playlist
 
 	err := r.db.QueryRow(ctx,
 		`UPDATE playlists
@@ -173,7 +173,7 @@ func (r *Repository) GetPlaylistVideos(playlistID int) ([]domain.Video, error) {
 	videos := make([]domain.Video, 0)
 
 	for rows.Next() {
-		var dbVideo dbModels.Video
+		var dbVideo dbmodel.Video
 
 		err = rows.Scan(
 			&dbVideo.ID,

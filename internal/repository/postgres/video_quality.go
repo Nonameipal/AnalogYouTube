@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
-	dbModels "github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
+	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
 )
 
 func (r *Repository) CreateVideoQuality(quality domain.VideoQuality) (domain.VideoQuality, error) {
 	ctx := context.Background()
-	var dbQuality dbModels.VideoQuality
+	var dbQuality dbmodel.VideoQuality
 
 	err := r.db.QueryRow(ctx,
 		`INSERT INTO video_qualities (video_id, quality, video_url)
@@ -57,7 +57,7 @@ func (r *Repository) GetVideoQualities(videoID int) ([]domain.VideoQuality, erro
 	qualities := make([]domain.VideoQuality, 0)
 
 	for rows.Next() {
-		var dbQuality dbModels.VideoQuality
+		var dbQuality dbmodel.VideoQuality
 
 		err = rows.Scan(
 			&dbQuality.ID,

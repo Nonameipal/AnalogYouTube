@@ -9,7 +9,7 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/utils"
 )
 
-func (s *Service) CreateUser(user domain.User) error {
+func (uc *Usecase) CreateUser(user domain.User) error {
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
 	user.Password = strings.TrimSpace(user.Password)
@@ -18,7 +18,7 @@ func (s *Service) CreateUser(user domain.User) error {
 		return errs.ErrInvalidFieldValue
 	}
 
-	_, err := s.repository.GetUserByUsername(user.Username)
+	_, err := uc.repository.GetUserByUsername(user.Username)
 	if err != nil {
 		if !errors.Is(err, errs.ErrNotFound) {
 			return err
@@ -28,7 +28,7 @@ func (s *Service) CreateUser(user domain.User) error {
 	}
 
 	if user.Email != "" {
-		_, err = s.repository.GetUserByEmail(user.Email)
+		_, err = uc.repository.GetUserByEmail(user.Email)
 		if err != nil {
 			if !errors.Is(err, errs.ErrNotFound) {
 				return err
@@ -46,10 +46,10 @@ func (s *Service) CreateUser(user domain.User) error {
 	user.Password = hashedPassword
 	user.Role = domain.UserRole
 
-	return s.repository.CreateUser(user)
+	return uc.repository.CreateUser(user)
 }
 
-func (s *Service) Authenticate(user domain.User) (int, string, error) {
+func (uc *Usecase) Authenticate(user domain.User) (int, string, error) {
 	user.Username = strings.TrimSpace(user.Username)
 	user.Password = strings.TrimSpace(user.Password)
 
@@ -57,7 +57,7 @@ func (s *Service) Authenticate(user domain.User) (int, string, error) {
 		return 0, "", errs.ErrInvalidFieldValue
 	}
 
-	userFromDB, err := s.repository.GetUserByUsername(user.Username)
+	userFromDB, err := uc.repository.GetUserByUsername(user.Username)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return 0, "", errs.ErrUserNotFound
@@ -72,12 +72,12 @@ func (s *Service) Authenticate(user domain.User) (int, string, error) {
 	return userFromDB.ID, userFromDB.Role, nil
 }
 
-func (s *Service) GetUserByID(id int) (domain.User, error) {
+func (uc *Usecase) GetUserByID(id int) (domain.User, error) {
 	if id <= 0 {
 		return domain.User{}, errs.ErrInvalidFieldValue
 	}
 
-	user, err := s.repository.GetUserByID(id)
+	user, err := uc.repository.GetUserByID(id)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return domain.User{}, errs.ErrUserNotFound
@@ -88,7 +88,7 @@ func (s *Service) GetUserByID(id int) (domain.User, error) {
 	return user, nil
 }
 
-func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, error) {
+func (uc *Usecase) UpdateUserProfile(userID int, user domain.User) (domain.User, error) {
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
 	user.AvatarURL = strings.TrimSpace(user.AvatarURL)
@@ -98,11 +98,12 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 		return domain.User{}, errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetUserByID(userID); err != nil {
+	oldUser, err := uc.GetUserByID(userID)
+	if err != nil {
 		return domain.User{}, err
 	}
 
-	userByUsername, err := s.repository.GetUserByUsername(user.Username)
+	userByUsername, err := uc.repository.GetUserByUsername(user.Username)
 	if err != nil {
 		if !errors.Is(err, errs.ErrNotFound) {
 			return domain.User{}, err
@@ -112,7 +113,7 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 	}
 
 	if user.Email != "" {
-		userByEmail, err := s.repository.GetUserByEmail(user.Email)
+		userByEmail, err := uc.repository.GetUserByEmail(user.Email)
 		if err != nil {
 			if !errors.Is(err, errs.ErrNotFound) {
 				return domain.User{}, err
@@ -123,55 +124,59 @@ func (s *Service) UpdateUserProfile(userID int, user domain.User) (domain.User, 
 	}
 
 	user.ID = userID
-	return s.repository.UpdateUserProfile(user)
+	if user.AvatarURL == "" {
+		user.AvatarURL = oldUser.AvatarURL
+	}
+
+	return uc.repository.UpdateUserProfile(user)
 }
 
-func (s *Service) GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error) {
+func (uc *Usecase) GetUserProfile(userID int, viewerID *int) (domain.UserProfile, error) {
 	if userID <= 0 {
 		return domain.UserProfile{}, errs.ErrInvalidFieldValue
 	}
 
-	user, err := s.GetUserByID(userID)
+	user, err := uc.GetUserByID(userID)
 	if err != nil {
 		return domain.UserProfile{}, err
 	}
 
-	videos, err := s.repository.GetVideosByAuthorID(userID)
+	videos, err := uc.repository.GetVideosByAuthorID(userID)
 	if err != nil {
 		return domain.UserProfile{}, err
 	}
 
-	subscribersCount, err := s.repository.GetSubscribersCount(userID)
+	subscribersCount, err := uc.repository.GetSubscribersCount(userID)
 	if err != nil {
 		return domain.UserProfile{}, err
 	}
 
-	subscriptionsCount, err := s.repository.GetSubscriptionsCount(userID)
+	subscriptionsCount, err := uc.repository.GetSubscriptionsCount(userID)
 	if err != nil {
 		return domain.UserProfile{}, err
 	}
 
 	profile := domain.UserProfile{
-		ID: user.ID,
-		Username: user.Username,
-		Email: user.Email,
-		Role: user.Role,
-		AvatarURL: user.AvatarURL,
-		Description: user.Description,
-		SubscribersCount: subscribersCount,
+		ID:                 user.ID,
+		Username:           user.Username,
+		Email:              user.Email,
+		Role:               user.Role,
+		AvatarURL:          user.AvatarURL,
+		Description:        user.Description,
+		SubscribersCount:   subscribersCount,
 		SubscriptionsCount: subscriptionsCount,
-		Videos: videos,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		Videos:             videos,
+		CreatedAt:          user.CreatedAt,
+		UpdatedAt:          user.UpdatedAt,
 	}
 
 	if viewerID != nil && *viewerID == userID {
-		subscribers, err := s.repository.GetSubscribers(userID)
+		subscribers, err := uc.repository.GetSubscribers(userID)
 		if err != nil {
 			return domain.UserProfile{}, err
 		}
 
-		subscriptions, err := s.repository.GetSubscriptions(userID)
+		subscriptions, err := uc.repository.GetSubscriptions(userID)
 		if err != nil {
 			return domain.UserProfile{}, err
 		}
@@ -181,26 +186,4 @@ func (s *Service) GetUserProfile(userID int, viewerID *int) (domain.UserProfile,
 	}
 
 	return profile, nil
-}
-
-func (s *Service) UpdateUserAvatar(userID int, avatarURL string) (domain.User, error) {
-	avatarURL = strings.TrimSpace(avatarURL)
-
-	if userID <= 0 || avatarURL == "" {
-		return domain.User{}, errs.ErrInvalidFieldValue
-	}
-
-	if _, err := s.GetUserByID(userID); err != nil {
-		return domain.User{}, err
-	}
-
-	user, err := s.repository.UpdateUserAvatar(userID, avatarURL)
-	if err != nil {
-		if errors.Is(err, errs.ErrNotFound) {
-			return domain.User{}, errs.ErrUserNotFound
-		}
-		return domain.User{}, err
-	}
-
-	return user, nil
 }

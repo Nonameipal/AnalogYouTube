@@ -1,12 +1,12 @@
 package dto
 
 type CreatePlaylistRequest struct {
-	Name string `json:"name"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
 type UpdatePlaylistRequest struct {
-	Name string `json:"name"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 

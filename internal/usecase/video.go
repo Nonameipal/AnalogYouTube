@@ -8,7 +8,7 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 )
 
-func (s *Service) CreateVideo(authorID int, video domain.Video) (domain.Video, error) {
+func (uc *Usecase) CreateVideo(authorID int, video domain.Video) (domain.Video, error) {
 	video.Title = strings.TrimSpace(video.Title)
 	video.Description = strings.TrimSpace(video.Description)
 	video.VideoURL = strings.TrimSpace(video.VideoURL)
@@ -18,7 +18,7 @@ func (s *Service) CreateVideo(authorID int, video domain.Video) (domain.Video, e
 		return domain.Video{}, errs.ErrInvalidFieldValue
 	}
 
-	categoryID, err := s.resolveCategoryIDByName(video.CategoryName)
+	categoryID, err := uc.resolveCategoryIDByName(video.CategoryName)
 	if err != nil {
 		return domain.Video{}, err
 	}
@@ -27,10 +27,10 @@ func (s *Service) CreateVideo(authorID int, video domain.Video) (domain.Video, e
 	video.AuthorID = authorID
 	video.Status = domain.VideoStatusActive
 
-	return s.repository.CreateVideo(video)
+	return uc.repository.CreateVideo(video)
 }
 
-func (s *Service) resolveCategoryIDByName(categoryName *string) (*int, error) {
+func (uc *Usecase) resolveCategoryIDByName(categoryName *string) (*int, error) {
 	if categoryName == nil {
 		return nil, nil
 	}
@@ -40,7 +40,7 @@ func (s *Service) resolveCategoryIDByName(categoryName *string) (*int, error) {
 		return nil, nil
 	}
 
-	category, err := s.GetCategoryByName(name)
+	category, err := uc.GetCategoryByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -49,48 +49,53 @@ func (s *Service) resolveCategoryIDByName(categoryName *string) (*int, error) {
 	return &categoryID, nil
 }
 
-func (s *Service) GetAllVideos() ([]domain.Video, error) {
-	return s.repository.GetAllVideos()
+func (uc *Usecase) GetAllVideos() ([]domain.Video, error) {
+	return uc.repository.GetAllVideos()
 }
 
-func (s *Service) GetRecommendedVideos() ([]domain.Video, error) {
-	return s.repository.GetRecommendedVideos()
+func (uc *Usecase) GetRecommendedVideos() ([]domain.Video, error) {
+	return uc.repository.GetRecommendedVideos()
 }
 
-func (s *Service) GetVideoByID(id int) (domain.Video, error) {
+func (uc *Usecase) GetVideoByID(id int) (domain.Video, error) {
 	if id <= 0 {
 		return domain.Video{}, errs.ErrInvalidFieldValue
 	}
 
-	video, err := s.repository.GetVideoByID(id)
+	video, err := uc.repository.GetVideoByID(id)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return domain.Video{}, errs.ErrVideoNotFound
 		}
 		return domain.Video{}, err
 	}
+	qualities, err := uc.repository.GetVideoQualities(id)
+	if err != nil {
+		return domain.Video{}, err
+	}
+	video.Qualities = qualities
 
 	return video, nil
 }
 
-func (s *Service) GetUserVideos(userID int) ([]domain.Video, error) {
+func (uc *Usecase) GetUserVideos(userID int) ([]domain.Video, error) {
 	if userID <= 0 {
 		return nil, errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetUserByID(userID); err != nil {
+	if _, err := uc.GetUserByID(userID); err != nil {
 		return nil, err
 	}
 
-	return s.repository.GetVideosByAuthorID(userID)
+	return uc.repository.GetVideosByAuthorID(userID)
 }
 
-func (s *Service) IncrementVideoViews(id int) error {
+func (uc *Usecase) IncrementVideoViews(id int) error {
 	if id <= 0 {
 		return errs.ErrInvalidFieldValue
 	}
 
-	if err := s.repository.IncrementVideoViews(id); err != nil {
+	if err := uc.repository.IncrementVideoViews(id); err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return errs.ErrVideoNotFound
 		}
@@ -100,17 +105,16 @@ func (s *Service) IncrementVideoViews(id int) error {
 	return nil
 }
 
-func (s *Service) UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error) {
+func (uc *Usecase) UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error) {
 	video.Title = strings.TrimSpace(video.Title)
 	video.Description = strings.TrimSpace(video.Description)
-	video.VideoURL = strings.TrimSpace(video.VideoURL)
 	video.ThumbnailURL = strings.TrimSpace(video.ThumbnailURL)
 
-	if userID <= 0 || video.ID <= 0 || video.Title == "" || video.VideoURL == "" {
+	if userID <= 0 || video.ID <= 0 || video.Title == "" {
 		return domain.Video{}, errs.ErrInvalidFieldValue
 	}
 
-	oldVideo, err := s.GetVideoByID(video.ID)
+	oldVideo, err := uc.GetVideoByID(video.ID)
 	if err != nil {
 		return domain.Video{}, err
 	}
@@ -121,23 +125,27 @@ func (s *Service) UpdateVideo(userID int, userRole string, video domain.Video) (
 
 	categoryID := oldVideo.CategoryID
 	if video.CategoryName != nil {
-		categoryID, err = s.resolveCategoryIDByName(video.CategoryName)
+		categoryID, err = uc.resolveCategoryIDByName(video.CategoryName)
 		if err != nil {
 			return domain.Video{}, err
 		}
 	}
 
+	video.VideoURL = oldVideo.VideoURL
 	video.CategoryID = categoryID
+	if video.ThumbnailURL == "" {
+		video.ThumbnailURL = oldVideo.ThumbnailURL
+	}
 
-	return s.repository.UpdateVideo(video)
+	return uc.repository.UpdateVideo(video)
 }
 
-func (s *Service) DeleteVideo(userID int, userRole string, videoID int) error {
+func (uc *Usecase) DeleteVideo(userID int, userRole string, videoID int) error {
 	if userID <= 0 || videoID <= 0 {
 		return errs.ErrInvalidFieldValue
 	}
 
-	video, err := s.GetVideoByID(videoID)
+	video, err := uc.GetVideoByID(videoID)
 	if err != nil {
 		return err
 	}
@@ -146,7 +154,7 @@ func (s *Service) DeleteVideo(userID int, userRole string, videoID int) error {
 		return errs.ErrAccessDenied
 	}
 
-	if err = s.repository.DeleteVideo(videoID); err != nil {
+	if err = uc.repository.DeleteVideo(videoID); err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return errs.ErrVideoNotFound
 		}
@@ -156,7 +164,7 @@ func (s *Service) DeleteVideo(userID int, userRole string, videoID int) error {
 	return nil
 }
 
-func (s *Service) CategoryExists(categoryName *string) error {
+func (uc *Usecase) CategoryExists(categoryName *string) error {
 	if categoryName == nil {
 		return nil
 	}
@@ -165,55 +173,28 @@ func (s *Service) CategoryExists(categoryName *string) error {
 		return errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetCategoryByName(*categoryName); err != nil {
+	if _, err := uc.GetCategoryByName(*categoryName); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) SearchVideosByTitle(title string) ([]domain.Video, error) {
+func (uc *Usecase) SearchVideosByTitle(title string) ([]domain.Video, error) {
 	title = strings.TrimSpace(title)
 	if title == "" {
-		return s.repository.GetRecommendedVideos()
+		return uc.repository.GetRecommendedVideos()
 	}
 
-	return s.repository.SearchVideosByTitle(title)
+	return uc.repository.SearchVideosByTitle(title)
 }
 
-func (s *Service) UpdateVideoThumbnail(userID int, userRole string, videoID int, thumbnailURL string) (domain.Video, error) {
-	thumbnailURL = strings.TrimSpace(thumbnailURL)
-
-	if userID <= 0 || videoID <= 0 || thumbnailURL == "" {
-		return domain.Video{}, errs.ErrInvalidFieldValue
-	}
-
-	video, err := s.GetVideoByID(videoID)
-	if err != nil {
-		return domain.Video{}, err
-	}
-
-	if video.AuthorID != userID && userRole != domain.AdminRole {
-		return domain.Video{}, errs.ErrAccessDenied
-	}
-
-	updatedVideo, err := s.repository.UpdateVideoThumbnail(videoID, thumbnailURL)
-	if err != nil {
-		if errors.Is(err, errs.ErrNotFound) {
-			return domain.Video{}, errs.ErrVideoNotFound
-		}
-		return domain.Video{}, err
-	}
-
-	return updatedVideo, nil
-}
-
-func (s *Service) GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error) {
+func (uc *Usecase) GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error) {
 	if userID <= 0 || videoID <= 0 || inputPath == "" || outputDir == "" || outputURLPrefix == "" {
 		return nil, errs.ErrInvalidFieldValue
 	}
 
-	video, err := s.GetVideoByID(videoID)
+	video, err := uc.GetVideoByID(videoID)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +203,7 @@ func (s *Service) GenerateVideoQualities(userID int, userRole string, videoID in
 		return nil, errs.ErrAccessDenied
 	}
 
-	qualities, err := s.ffmpegSettings.GenerateVideoQualities(inputPath, outputDir, outputURLPrefix)
+	qualities, err := uc.ffmpegSettings.GenerateVideoQualities(inputPath, outputDir, outputURLPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +213,7 @@ func (s *Service) GenerateVideoQualities(userID int, userRole string, videoID in
 	for _, quality := range qualities {
 		quality.VideoID = videoID
 
-		savedQuality, err := s.repository.CreateVideoQuality(quality)
+		savedQuality, err := uc.repository.CreateVideoQuality(quality)
 		if err != nil {
 			return nil, err
 		}
@@ -241,4 +222,36 @@ func (s *Service) GenerateVideoQualities(userID int, userRole string, videoID in
 	}
 
 	return savedQualities, nil
+}
+
+func (uc *Usecase) GetPlaybackSpeeds() []float64 {
+	return []float64{0.25, 1.0, 1.25, 1.5, 2.0}
+}
+
+func (uc *Usecase) DeleteVideoWithArchive(userID int, userRole string, videoID int, inputPath string, archivePath string, archiveURL string) error {
+	if userID <= 0 || videoID <= 0 || inputPath == "" || archivePath == "" || archiveURL == "" {
+		return errs.ErrInvalidFieldValue
+	}
+
+	video, err := uc.GetVideoByID(videoID)
+	if err != nil {
+		return err
+	}
+
+	if video.AuthorID != userID && userRole != domain.AdminRole {
+		return errs.ErrAccessDenied
+	}
+
+	if err = uc.ffmpegSettings.GenerateArchive144p(inputPath, archivePath); err != nil {
+		return err
+	}
+
+	if err = uc.repository.ArchiveDeletedVideo(videoID, archiveURL); err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return errs.ErrVideoNotFound
+		}
+		return err
+	}
+
+	return nil
 }

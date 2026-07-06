@@ -13,9 +13,9 @@ func InitRedisConnection() error {
 	cfg := configs.AppSettings
 
 	rdb = redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", cfg.RedisParams.Host, cfg.RedisParams.Port),
+		Addr:     fmt.Sprintf("%s:%s", cfg.RedisParams.Host, cfg.RedisParams.Port),
 		Password: cfg.RedisParams.Password,
-		DB: cfg.RedisParams.DB,
+		DB:       cfg.RedisParams.DB,
 	})
 
 	return nil

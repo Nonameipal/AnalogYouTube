@@ -1,118 +1,89 @@
 package httpdelivery
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 
-	"github.com/Nonameipal/AnalogYouTube/internal/delivery/http/dto"
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 	"github.com/Nonameipal/AnalogYouTube/pkg"
 )
 
-func (ctrl *Controller) GetUserProfile(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	userID, err := getIDFromRequest(r, "id")
 	if err != nil {
-		ctrl.handleError(w, err)
+		h.handleError(w, err)
 		return
 	}
 	var viewerID *int
-	tokenString, err := ctrl.extractTokenFromHeader(r, authorizationHeader)
+	tokenString, err := h.extractTokenFromHeader(r, authorizationHeader)
 	if err == nil {
 		id, isRefresh, _, err := pkg.ParseToken(tokenString)
 		if err != nil {
-			ctrl.handleError(w, errs.ErrInvalidToken)
+			h.handleError(w, errs.ErrInvalidToken)
 			return
 		}
 
 		if isRefresh {
-			ctrl.handleError(w, errs.ErrInvalidToken)
+			h.handleError(w, errs.ErrInvalidToken)
 			return
 		}
 
 		viewerID = &id
 	}
-	profile, err := ctrl.service.GetUserProfile(userID, viewerID)
+	profile, err := h.service.GetUserProfile(userID, viewerID)
 	if err != nil {
-		ctrl.handleError(w, err)
+		h.handleError(w, err)
 		return
 	}
 
 	writeJSON(w, http.StatusOK, profile)
 }
 
-func (ctrl *Controller) GetUserVideos(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetUserVideos(w http.ResponseWriter, r *http.Request) {
 	userID, err := getIDFromRequest(r, "id")
 	if err != nil {
-		ctrl.handleError(w, err)
+		h.handleError(w, err)
 		return
 	}
 
-	videos, err := ctrl.service.GetUserVideos(userID)
+	videos, err := h.service.GetUserVideos(userID)
 	if err != nil {
-		ctrl.handleError(w, err)
+		h.handleError(w, err)
 		return
 	}
 
 	writeJSON(w, http.StatusOK, videos)
 }
 
-func (ctrl *Controller) UpdateMe(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateMe(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
-		ctrl.handleError(w, errs.ErrInvalidToken)
+		h.handleError(w, errs.ErrInvalidToken)
 		return
 	}
 
-	var input dto.UpdateProfileRequest
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		ctrl.handleError(w, errors.Join(errs.ErrInvalidRequestBody, err))
+	if err := r.ParseMultipartForm(20 << 20); err != nil {
+		h.handleError(w, errs.ErrInvalidRequestBody)
 		return
 	}
 
-	user, err := ctrl.service.UpdateUserProfile(userID, domain.User{
-		Username: input.Username,
-		Email: input.Email,
-		AvatarURL: input.AvatarURL,
-		Description: input.Description,
+	avatarURL, err := h.saveMultipartFile(r, "avatar", "avatars", false)
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	user, err := h.service.UpdateUserProfile(userID, domain.User{
+		Username:    r.FormValue("username"),
+		Email:       r.FormValue("email"),
+		AvatarURL:   avatarURL,
+		Description: r.FormValue("description"),
 	})
 	if err != nil {
-		ctrl.handleError(w, err)
-		return
-	}
-
-	writeJSON(w, http.StatusOK, user)
-}
-
-func (ctrl *Controller) UploadMyAvatar(w http.ResponseWriter, r *http.Request) {
-	userID, ok := getUserIDFromContext(r)
-	if !ok {
-		ctrl.handleError(w, errs.ErrInvalidToken)
-		return
-	}
-
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		ctrl.handleError(w, errs.ErrInvalidRequestBody)
-		return
-	}
-
-	file, header, err := r.FormFile("avatar")
-	if err != nil {
-		ctrl.handleError(w, errs.ErrInvalidRequestBody)
-		return
-	}
-	defer file.Close()
-
-	avatarURL, err := ctrl.storage.SaveFile(file, header, "avatars")
-	if err != nil {
-		ctrl.handleError(w, err)
-		return
-	}
-
-	user, err := ctrl.service.UpdateUserAvatar(userID, avatarURL)
-	if err != nil {
-		ctrl.handleError(w, err)
+		if avatarURL != "" {
+			h.cleanupFailedVideoUpload(0, "", 0, "", avatarURL)
+		}
+		h.handleError(w, err)
 		return
 	}
 

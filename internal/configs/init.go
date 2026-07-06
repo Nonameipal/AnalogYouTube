@@ -1,59 +1,103 @@
 package configs
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
-	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
+	"github.com/Nonameipal/AnalogYouTube/internal/logger"
 	"github.com/joho/godotenv"
 )
 
 var AppSettings Configs
 
-func ReadSettings() error {
-	logger := appLogger.GetLogger()
-	logger.Info().Msg("starting reading settings file")
+const defaultPostgresDatabase = "analogyoutube"
+
+func Load() error {
+	log := logger.GetLogger()
+	log.Info().Msg("loading application settings")
 
 	_ = godotenv.Load(".env")
 
-	configFile, err := os.Open("internal/configs/configs.json")
+	jwtSecret, err := envRequired("JWT_SECRET")
 	if err != nil {
-		return fmt.Errorf("couldn't open config file: %w", err)
+		return err
 	}
 
-	defer func(configFile *os.File) {
-		if closeErr := configFile.Close(); closeErr != nil {
-			logger.Error().Err(closeErr).Msg("couldn't close config file")
-		}
-	}(configFile)
-
-	logger.Info().Msg("starting decoding settings file")
-	if err = json.NewDecoder(configFile).Decode(&AppSettings); err != nil {
-		return fmt.Errorf("couldn't decode settings json file: %w", err)
-	}
-	if value := os.Getenv("JWT_SECRET"); value != "" {
-		AppSettings.AuthParams.JwtSecret = value
-	}
-	if value := os.Getenv("POSTGRES_HOST"); value != "" {
-		AppSettings.PostgresParams.Host = value
-	}
-	if value := os.Getenv("POSTGRES_PORT"); value != "" {
-		AppSettings.PostgresParams.Port = value
-	}
-	if value := os.Getenv("POSTGRES_USER"); value != "" {
-		AppSettings.PostgresParams.User = value
-	}
-	if value := os.Getenv("POSTGRES_PASSWORD"); value != "" {
-		AppSettings.PostgresParams.Password = value
-	}
-	if value := os.Getenv("POSTGRES_DATABASE"); value != "" {
-		AppSettings.PostgresParams.Database = value
+	postgresUser, err := envRequired("POSTGRES_USER")
+	if err != nil {
+		return err
 	}
 
-	if AppSettings.AuthParams.JwtSecret == "" {
-		return fmt.Errorf("jwt_secret is empty: set auth_params.jwt_secret in configs.json or JWT_SECRET in .env")
+	postgresPassword, err := envRequired("POSTGRES_PASSWORD")
+	if err != nil {
+		return err
+	}
+
+	postgresDatabase := envString("POSTGRES_DATABASE", defaultPostgresDatabase)
+	if postgresDatabase != defaultPostgresDatabase {
+		return fmt.Errorf("POSTGRES_DATABASE must be %s", defaultPostgresDatabase)
+	}
+
+	AppSettings = Configs{
+		AppParams: AppParams{
+			ServerURL:  envString("SERVER_URL", "localhost"),
+			ServerName: envString("SERVER_NAME", "GlobalServer"),
+			PortRun:    envString("SERVER_PORT", "6666"),
+			GinMode:    envString("GIN_MODE", "debug"),
+		},
+		PostgresParams: PostgresParams{
+			Host:     envString("POSTGRES_HOST", "localhost"),
+			Port:     envString("POSTGRES_PORT", "5432"),
+			User:     postgresUser,
+			Password: postgresPassword,
+			Database: postgresDatabase,
+		},
+		AuthParams: AuthParams{
+			AccessTokenTtlMinutes: envInt("ACCESS_TOKEN_TTL_MINUTES", 15),
+			RefreshTokenTtlDays:   envInt("REFRESH_TOKEN_TTL_DAYS", 30),
+			JwtSecret:             jwtSecret,
+		},
+		RedisParams: RedisParams{
+			Host:     envString("REDIS_HOST", "localhost"),
+			Port:     envString("REDIS_PORT", "6379"),
+			Password: envString("REDIS_PASSWORD", ""),
+			DB:       envInt("REDIS_DB", 0),
+		},
 	}
 
 	return nil
+}
+
+func envString(key string, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	return value
+}
+
+func envRequired(key string) (string, error) {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return "", fmt.Errorf("%s is empty: set it in .env or environment variables", key)
+	}
+
+	return value, nil
+}
+
+func envInt(key string, fallback int) int {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	parsedValue, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+
+	return parsedValue
 }

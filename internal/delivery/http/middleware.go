@@ -16,9 +16,9 @@ const (
 	userRoleContextKey contextKey = "user_role"
 )
 
-func (ctrl *Controller) checkUserAuthentication(next http.Handler) http.Handler {
+func (h *Handler) checkUserAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenString, err := ctrl.extractTokenFromHeader(r, authorizationHeader)
+		tokenString, err := h.extractTokenFromHeader(r, authorizationHeader)
 		if err != nil {
 			writeJSON(w, http.StatusUnauthorized, CommonError{Error: err.Error()})
 			return
@@ -42,11 +42,11 @@ func (ctrl *Controller) checkUserAuthentication(next http.Handler) http.Handler 
 	})
 }
 
-func (ctrl *Controller) checkIsAdmin(next http.Handler) http.Handler {
+func (h *Handler) checkIsAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		role, ok := r.Context().Value(userRoleContextKey).(string)
 		if !ok || role != domain.AdminRole {
-			ctrl.handleError(w, errs.ErrAccessDenied)
+			h.handleError(w, errs.ErrAccessDenied)
 			return
 		}
 

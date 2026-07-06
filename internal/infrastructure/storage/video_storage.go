@@ -1,14 +1,16 @@
 package storage
+
 import (
+	"errors"
+	"fmt"
+	"io"
 	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"fmt"
-	"io"
-
 )
+
 type VideoStorage struct {
 	BasePath string
 	BaseURL  string
@@ -29,7 +31,7 @@ func (s *VideoStorage) SaveFile(file multipart.File, header *multipart.FileHeade
 	ext := strings.ToLower(filepath.Ext(header.Filename))
 	fileName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
 
-		fullPath := filepath.Join(s.BasePath, folder, fileName)
+	fullPath := filepath.Join(s.BasePath, folder, fileName)
 
 	dst, err := os.Create(fullPath)
 	if err != nil {
@@ -46,11 +48,10 @@ func (s *VideoStorage) SaveFile(file multipart.File, header *multipart.FileHeade
 
 func (s *VideoStorage) URLPath(fileURL string) string {
 	cleanURL := strings.TrimPrefix(fileURL, "/")
-	cleanURL = strings.TrimPrefix(cleanURL, s.BaseURL)
+	cleanURL = strings.TrimPrefix(cleanURL, s.BaseURL+"/")
 
 	return filepath.Join(s.BasePath, cleanURL)
 }
-
 func (s *VideoStorage) VideoQualitiesPaths(videoID int) (string, string) {
 	folder := fmt.Sprintf("videos/%d", videoID)
 
@@ -58,4 +59,61 @@ func (s *VideoStorage) VideoQualitiesPaths(videoID int) (string, string) {
 	outputURLPrefix := "/" + filepath.ToSlash(filepath.Join(s.BaseURL, folder))
 
 	return outputDir, outputURLPrefix
+}
+func (s *VideoStorage) VideoArchivePath(videoID int) (string, string) {
+	folder := fmt.Sprintf("videos/%d/archive", videoID)
+	fileName := "144p.mp4"
+
+	outputPath := filepath.Join(s.BasePath, folder, fileName)
+	archiveURL := "/" + filepath.ToSlash(filepath.Join(s.BaseURL, folder, fileName))
+
+	return outputPath, archiveURL
+}
+
+func (s *VideoStorage) RemoveFileByURL(fileURL string) error {
+	if fileURL == "" {
+		return nil
+	}
+
+	return s.removeInsideBasePath(s.URLPath(fileURL), false)
+}
+
+func (s *VideoStorage) RemoveDir(path string) error {
+	if path == "" {
+		return nil
+	}
+
+	return s.removeInsideBasePath(path, true)
+}
+
+func (s *VideoStorage) removeInsideBasePath(path string, recursive bool) error {
+	basePath, err := filepath.Abs(s.BasePath)
+	if err != nil {
+		return err
+	}
+
+	targetPath, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+
+	relativePath, err := filepath.Rel(basePath, targetPath)
+	if err != nil {
+		return err
+	}
+
+	if relativePath == "." || relativePath == ".." || strings.HasPrefix(relativePath, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("storage path is outside base path")
+	}
+
+	if recursive {
+		return os.RemoveAll(targetPath)
+	}
+
+	err = os.Remove(targetPath)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+
+	return err
 }

@@ -8,7 +8,6 @@ type RepositoryI interface {
 	GetUserByEmail(email string) (domain.User, error)
 	GetUserByID(id int) (domain.User, error)
 	UpdateUserProfile(user domain.User) (domain.User, error)
-	UpdateUserAvatar(userID int, avatarURL string) (domain.User, error)
 
 	CreateVideo(video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
@@ -18,10 +17,10 @@ type RepositoryI interface {
 	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
 	UpdateVideo(video domain.Video) (domain.Video, error)
-	UpdateVideoThumbnail(videoID int, thumbnailURL string) (domain.Video, error)
 	CreateVideoQuality(quality domain.VideoQuality) (domain.VideoQuality, error)
-    GetVideoQualities(videoID int) ([]domain.VideoQuality, error)
+	GetVideoQualities(videoID int) ([]domain.VideoQuality, error)
 	DeleteVideo(id int) error
+	ArchiveDeletedVideo(videoID int, archiveURL string) error
 
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
@@ -53,9 +52,15 @@ type RepositoryI interface {
 	UpdateComment(comment domain.Comment) (domain.Comment, error)
 	DeleteComment(commentID int) error
 
-	CreateOrGetChat(firstUserID int, secondUserID int) (domain.Chat, error)
 	GetChatByID(chatID int) (domain.Chat, error)
 	GetUserChats(userID int) ([]domain.Chat, error)
+	GetChatBetweenUsers(firstUserID int, secondUserID int) (domain.Chat, error)
+	CreateChatRequest(request domain.ChatRequest) (domain.ChatRequest, error)
+	GetChatRequestByID(requestID int) (domain.ChatRequest, error)
+	GetIncomingChatRequests(userID int) ([]domain.ChatRequest, error)
+	GetOutgoingChatRequests(userID int) ([]domain.ChatRequest, error)
+	AcceptChatRequest(requestID int, firstUserID int, secondUserID int) (domain.ChatRequest, domain.Chat, error)
+	RejectChatRequest(requestID int) (domain.ChatRequest, error)
 	CreateChatMessage(message domain.ChatMessage) (domain.ChatMessage, error)
 	GetChatMessages(chatID int) ([]domain.ChatMessage, error)
 

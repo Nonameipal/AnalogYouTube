@@ -5,12 +5,12 @@ import (
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
-	dbModels "github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
+	"github.com/Nonameipal/AnalogYouTube/internal/repository/postgres/dbmodel"
 )
 
 func (r *Repository) CreateComment(comment domain.Comment) (domain.Comment, error) {
 	ctx := context.Background()
-	var dbComment dbModels.Comment
+	var dbComment dbmodel.Comment
 	err := r.db.QueryRow(ctx,
 		`INSERT INTO comments (user_id, video_id, text, status)
 		VALUES ($1, $2, $3, $4)
@@ -40,9 +40,9 @@ func (r *Repository) GetVideoComments(videoID int) ([]domain.Comment, error) {
 	}
 	defer rows.Close()
 
-	var dbComments []dbModels.Comment
+	var dbComments []dbmodel.Comment
 	for rows.Next() {
-		var comment dbModels.Comment
+		var comment dbmodel.Comment
 		if err := rows.Scan(&comment.ID, &comment.UserID, &comment.VideoID, &comment.Text,
 			&comment.Status, &comment.CreatedAt, &comment.UpdatedAt); err != nil {
 			return nil, r.translateError(err)
@@ -64,7 +64,7 @@ func (r *Repository) GetVideoComments(videoID int) ([]domain.Comment, error) {
 
 func (r *Repository) GetCommentByID(commentID int) (domain.Comment, error) {
 	ctx := context.Background()
-	var dbComment dbModels.Comment
+	var dbComment dbmodel.Comment
 	err := r.db.QueryRow(ctx,
 		`SELECT id, user_id, video_id, text, status, created_at, updated_at
 		FROM comments
@@ -80,7 +80,7 @@ func (r *Repository) GetCommentByID(commentID int) (domain.Comment, error) {
 
 func (r *Repository) UpdateComment(comment domain.Comment) (domain.Comment, error) {
 	ctx := context.Background()
-	var dbComment dbModels.Comment
+	var dbComment dbmodel.Comment
 	err := r.db.QueryRow(ctx,
 		`UPDATE comments
 		SET text = $1, updated_at = CURRENT_TIMESTAMP

@@ -5,9 +5,27 @@ type CreateChatRequest struct {
 }
 
 type CreateChatMessageRequest struct {
-	Text string `json:"text"`
+	Text    string `json:"text"`
+	Content string `json:"content"`
 }
 
 type WebSocketChatMessageRequest struct {
-	Text string `json:"text"`
+	Text    string `json:"text"`
+	Content string `json:"content"`
+}
+
+func (r CreateChatMessageRequest) MessageText() string {
+	if r.Text != "" {
+		return r.Text
+	}
+
+	return r.Content
+}
+
+func (r WebSocketChatMessageRequest) MessageText() string {
+	if r.Text != "" {
+		return r.Text
+	}
+
+	return r.Content
 }

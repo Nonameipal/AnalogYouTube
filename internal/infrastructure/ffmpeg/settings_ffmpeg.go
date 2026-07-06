@@ -1,11 +1,13 @@
 package ffmpeg
+
 import (
+	"fmt"
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"fmt"
 )
+
 type FFmpegSettings struct {
 	BinaryPath string
 }
@@ -16,12 +18,12 @@ func NewFFmpegSettings(binaryPath string) *FFmpegSettings {
 	}
 }
 
-func (s *FFmpegSettings) GenerateVideoQualities(inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error){
+func (s *FFmpegSettings) GenerateVideoQualities(inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error) {
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
 		return nil, err
 	}
 	qualities := []struct {
-		Name string
+		Name   string
 		Height int
 	}{
 		{Name: "1080p", Height: 1080},
@@ -31,7 +33,7 @@ func (s *FFmpegSettings) GenerateVideoQualities(inputPath string, outputDir stri
 	}
 	result := make([]domain.VideoQuality, 0, len(qualities))
 
-		for _, quality := range qualities {
+	for _, quality := range qualities {
 		fileName := quality.Name + ".mp4"
 		outputPath := filepath.Join(outputDir, fileName)
 		outputURL := outputURLPrefix + "/" + fileName
@@ -54,10 +56,31 @@ func (s *FFmpegSettings) GenerateVideoQualities(inputPath string, outputDir stri
 		}
 
 		result = append(result, domain.VideoQuality{
-			Quality: quality.Name,
+			Quality:  quality.Name,
 			VideoURL: outputURL,
 		})
 	}
 
 	return result, nil
+}
+
+func (s *FFmpegSettings) GenerateArchive144p(inputPath string, outputPath string) error {
+	if err := os.MkdirAll(filepath.Dir(outputPath), os.ModePerm); err != nil {
+		return err
+	}
+
+	args := []string{
+		"-y",
+		"-i", inputPath,
+		"-vf", "scale=-2:144",
+		"-c:v", "libx264",
+		"-preset", "veryfast",
+		"-crf", "30",
+		"-c:a", "aac",
+		"-b:a", "64k",
+		outputPath,
+	}
+
+	cmd := exec.Command(s.BinaryPath, args...)
+	return cmd.Run()
 }

@@ -2,7 +2,7 @@ package usecase
 
 import "github.com/Nonameipal/AnalogYouTube/internal/errs"
 
-func (s *Service) SubscribeToUser(subscriberID int, authorID int) error {
+func (uc *Usecase) SubscribeToUser(subscriberID int, authorID int) error {
 	if subscriberID <= 0 || authorID <= 0 {
 		return errs.ErrInvalidFieldValue
 	}
@@ -10,14 +10,14 @@ func (s *Service) SubscribeToUser(subscriberID int, authorID int) error {
 		return errs.ErrCannotSubscribeToYourself
 	}
 
-	if _, err := s.GetUserByID(authorID); err != nil {
+	if _, err := uc.GetUserByID(authorID); err != nil {
 		return err
 	}
 
-	return s.repository.SubscribeToUser(subscriberID, authorID)
+	return uc.repository.SubscribeToUser(subscriberID, authorID)
 }
 
-func (s *Service) UnsubscribeFromUser(subscriberID int, authorID int) error {
+func (uc *Usecase) UnsubscribeFromUser(subscriberID int, authorID int) error {
 	if subscriberID <= 0 || authorID <= 0 {
 		return errs.ErrInvalidFieldValue
 	}
@@ -25,45 +25,45 @@ func (s *Service) UnsubscribeFromUser(subscriberID int, authorID int) error {
 		return errs.ErrCannotSubscribeToYourself
 	}
 
-	if _, err := s.GetUserByID(authorID); err != nil {
+	if _, err := uc.GetUserByID(authorID); err != nil {
 		return err
 	}
 
-	return s.repository.UnsubscribeFromUser(subscriberID, authorID)
+	return uc.repository.UnsubscribeFromUser(subscriberID, authorID)
 }
 
-func (s *Service) GetSubscribersCount(authorID int) (int, error) {
+func (uc *Usecase) GetSubscribersCount(authorID int) (int, error) {
 	if authorID <= 0 {
 		return 0, errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetUserByID(authorID); err != nil {
+	if _, err := uc.GetUserByID(authorID); err != nil {
 		return 0, err
 	}
 
-	return s.repository.GetSubscribersCount(authorID)
+	return uc.repository.GetSubscribersCount(authorID)
 }
 
-func (s *Service) GetSubscriptionsCount(subscriberID int) (int, error) {
+func (uc *Usecase) GetSubscriptionsCount(subscriberID int) (int, error) {
 	if subscriberID <= 0 {
 		return 0, errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetUserByID(subscriberID); err != nil {
+	if _, err := uc.GetUserByID(subscriberID); err != nil {
 		return 0, err
 	}
 
-	return s.repository.GetSubscriptionsCount(subscriberID)
+	return uc.repository.GetSubscriptionsCount(subscriberID)
 }
 
-func (s *Service) IsSubscribed(subscriberID int, authorID int) (bool, error) {
+func (uc *Usecase) IsSubscribed(subscriberID int, authorID int) (bool, error) {
 	if subscriberID <= 0 || authorID <= 0 {
 		return false, errs.ErrInvalidFieldValue
 	}
 
-	if _, err := s.GetUserByID(authorID); err != nil {
+	if _, err := uc.GetUserByID(authorID); err != nil {
 		return false, err
 	}
 
-	return s.repository.IsSubscribed(subscriberID, authorID)
+	return uc.repository.IsSubscribed(subscriberID, authorID)
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 )
 
-func (s *Service) CreateCategory(category domain.Category) (domain.Category, error) {
+func (uc *Usecase) CreateCategory(category domain.Category) (domain.Category, error) {
 	category.Name = strings.TrimSpace(category.Name)
 	category.Description = strings.TrimSpace(category.Description)
 
@@ -16,19 +16,19 @@ func (s *Service) CreateCategory(category domain.Category) (domain.Category, err
 		return domain.Category{}, errs.ErrInvalidFieldValue
 	}
 
-	return s.repository.CreateCategory(category)
+	return uc.repository.CreateCategory(category)
 }
 
-func (s *Service) GetAllCategories() ([]domain.Category, error) {
-	return s.repository.GetAllCategories()
+func (uc *Usecase) GetAllCategories() ([]domain.Category, error) {
+	return uc.repository.GetAllCategories()
 }
 
-func (s *Service) GetCategoryByName(name string) (domain.Category, error) {
+func (uc *Usecase) GetCategoryByName(name string) (domain.Category, error) {
 	if name == "" {
 		return domain.Category{}, errs.ErrInvalidFieldValue
 	}
 
-	category, err := s.repository.GetCategoryByName(name)
+	category, err := uc.repository.GetCategoryByName(name)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return domain.Category{}, errs.ErrCategoryNotFound
@@ -39,7 +39,7 @@ func (s *Service) GetCategoryByName(name string) (domain.Category, error) {
 	return category, nil
 }
 
-func (s *Service) UpdateCategory(category domain.Category) (domain.Category, error) {
+func (uc *Usecase) UpdateCategory(category domain.Category) (domain.Category, error) {
 	category.Name = strings.TrimSpace(category.Name)
 	category.Description = strings.TrimSpace(category.Description)
 
@@ -47,7 +47,7 @@ func (s *Service) UpdateCategory(category domain.Category) (domain.Category, err
 		return domain.Category{}, errs.ErrInvalidFieldValue
 	}
 
-	category, err := s.repository.UpdateCategory(category)
+	category, err := uc.repository.UpdateCategory(category)
 	if err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return domain.Category{}, errs.ErrCategoryNotFound
@@ -58,12 +58,12 @@ func (s *Service) UpdateCategory(category domain.Category) (domain.Category, err
 	return category, nil
 }
 
-func (s *Service) DeleteCategory(id int) error {
+func (uc *Usecase) DeleteCategory(id int) error {
 	if id <= 0 {
 		return errs.ErrInvalidFieldValue
 	}
 
-	if err := s.repository.DeleteCategory(id); err != nil {
+	if err := uc.repository.DeleteCategory(id); err != nil {
 		if errors.Is(err, errs.ErrNotFound) {
 			return errs.ErrCategoryNotFound
 		}

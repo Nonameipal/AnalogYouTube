@@ -1,8 +1,7 @@
 package dto
 
 type UpdateProfileRequest struct {
-	Username string `json:"username"`
-	Email string `json:"email"`
-	AvatarURL string `json:"avatar_url"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
 	Description string `json:"description"`
 }

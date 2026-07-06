@@ -1,9 +1,27 @@
 package dto
 
 type CreateCommentRequest struct {
-	Text string `json:"text"`
+	Text    string `json:"text"`
+	Content string `json:"content"`
 }
 
 type UpdateCommentRequest struct {
-	Text string `json:"text"`
+	Text    string `json:"text"`
+	Content string `json:"content"`
+}
+
+func (r CreateCommentRequest) CommentText() string {
+	if r.Text != "" {
+		return r.Text
+	}
+
+	return r.Content
+}
+
+func (r UpdateCommentRequest) CommentText() string {
+	if r.Text != "" {
+		return r.Text
+	}
+
+	return r.Content
 }

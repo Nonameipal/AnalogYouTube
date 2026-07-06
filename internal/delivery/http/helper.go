@@ -12,7 +12,7 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	refreshTokenHeader = "Refresh-Token"
+	refreshTokenHeader  = "Refresh-Token"
 )
 
 func writeJSON(w http.ResponseWriter, statusCode int, data any) {
@@ -24,7 +24,7 @@ func writeJSON(w http.ResponseWriter, statusCode int, data any) {
 	}
 }
 
-func (ctrl *Controller) extractTokenFromHeader(r *http.Request, headerKey string) (string, error) {
+func (h *Handler) extractTokenFromHeader(r *http.Request, headerKey string) (string, error) {
 	header := r.Header.Get(headerKey)
 	if header == "" {
 		return "", errors.New("empty authorization header")
@@ -46,7 +46,7 @@ func (ctrl *Controller) extractTokenFromHeader(r *http.Request, headerKey string
 	return headerParts[1], nil
 }
 
-func (ctrl *Controller) generateNewTokenPair(userID int, userRole string) (string, string, error) {
+func (h *Handler) generateNewTokenPair(userID int, userRole string) (string, string, error) {
 	accessToken, err := pkg.GenerateToken(
 		userID,
 		configs.AppSettings.AuthParams.AccessTokenTtlMinutes,
