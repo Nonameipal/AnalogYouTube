@@ -13,6 +13,8 @@ func (h *Handler) InitRoutes() error {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ping", h.ping).Methods(http.MethodGet)
+	r.HandleFunc("/swagger", h.swaggerUI)
+	r.PathPrefix("/swagger/").HandlerFunc(h.swaggerUI)
 
 	auth := r.PathPrefix("/auth").Subrouter()
 	{
@@ -109,6 +111,13 @@ func (h *Handler) InitRoutes() error {
 	return http.ListenAndServe(addr, r)
 }
 
+// ping godoc
+// @Summary Проверка сервера
+// @Description Быстрый ответ, что backend жив.
+// @Tags System
+// @Produce json
+// @Success 200 {object} CommonResponse
+// @Router /ping [get]
 func (h *Handler) ping(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, CommonResponse{Message: "Server is running"})
 }

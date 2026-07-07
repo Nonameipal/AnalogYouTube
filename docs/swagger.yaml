@@ -1,0 +1,1968 @@
+basePath: /
+definitions:
+  domain.AcceptedChatRequest:
+    properties:
+      chat:
+        $ref: '#/definitions/domain.Chat'
+      request:
+        $ref: '#/definitions/domain.ChatRequest'
+    type: object
+  domain.Category:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Chat:
+    properties:
+      created_at:
+        type: string
+      first_user_id:
+        type: integer
+      id:
+        type: integer
+      second_user_id:
+        type: integer
+    type: object
+  domain.ChatMessage:
+    properties:
+      chat_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      sender_id:
+        type: integer
+      text:
+        type: string
+    type: object
+  domain.ChatRequest:
+    properties:
+      chat_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      receiver_id:
+        type: integer
+      sender_id:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Comment:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      text:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      video_id:
+        type: integer
+    type: object
+  domain.Donation:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: integer
+      message:
+        type: string
+      receiver_id:
+        type: integer
+      sender_id:
+        type: integer
+      video_id:
+        type: integer
+    type: object
+  domain.Playlist:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      videos:
+        items:
+          $ref: '#/definitions/domain.Video'
+        type: array
+    type: object
+  domain.User:
+    properties:
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  domain.UserProfile:
+    properties:
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      subcribers:
+        items:
+          $ref: '#/definitions/domain.User'
+        type: array
+      subscribers_count:
+        type: integer
+      subscriptions:
+        items:
+          $ref: '#/definitions/domain.User'
+        type: array
+      subscriptions_count:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+      videos:
+        items:
+          $ref: '#/definitions/domain.Video'
+        type: array
+    type: object
+  domain.Video:
+    properties:
+      author_id:
+        type: integer
+      category_id:
+        type: integer
+      category_name:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      qualities:
+        items:
+          $ref: '#/definitions/domain.VideoQuality'
+        type: array
+      status:
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      video_url:
+        type: string
+      views:
+        type: integer
+    type: object
+  domain.VideoQuality:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      quality:
+        type: string
+      video_id:
+        type: integer
+      video_url:
+        type: string
+    type: object
+  dto.AddVideoToPlaylistRequest:
+    properties:
+      video_id:
+        type: integer
+    type: object
+  dto.CreateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.CreateChatMessageRequest:
+    properties:
+      content:
+        type: string
+      text:
+        type: string
+    type: object
+  dto.CreateChatRequest:
+    properties:
+      user_id:
+        type: integer
+    type: object
+  dto.CreateCommentRequest:
+    properties:
+      content:
+        type: string
+      text:
+        type: string
+    type: object
+  dto.CreateDonationRequest:
+    properties:
+      amount:
+        type: number
+      message:
+        type: string
+      receiver_id:
+        type: integer
+      recipient_id:
+        type: integer
+      video_id:
+        type: integer
+    type: object
+  dto.CreatePlaylistRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.SignInRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.SignUpRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.TokenPairResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  dto.UpdateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.UpdateCommentRequest:
+    properties:
+      content:
+        type: string
+      text:
+        type: string
+    type: object
+  dto.UpdatePlaylistRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  httpdelivery.CommonError:
+    properties:
+      error:
+        type: string
+    type: object
+  httpdelivery.CommonResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: analogyoutube@example.com
+    name: AnalogYouTube Backend
+  description: |-
+    API для AnalogYouTube: пользователи, видео, чаты, донаты и остальное.
+    Для закрытых запросов нажмите Authorize и вставьте: Bearer <token>.
+  title: AnalogYouTube API
+  version: "1.0"
+paths:
+  /api/admin/videos/{id}:
+    delete:
+      description: Полностью удаляет видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Админское удаление
+      tags:
+      - Admin
+      - Videos
+  /api/categories:
+    get:
+      description: Список категорий.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Category'
+            type: array
+      summary: Все категории
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Новая категория для видео.
+      parameters:
+      - description: Данные категории
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Создать категорию
+      tags:
+      - Categories
+      - Admin
+  /api/categories/{id}:
+    delete:
+      description: Удаляет категорию.
+      parameters:
+      - description: ID категории
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Удалить категорию
+      tags:
+      - Categories
+      - Admin
+    put:
+      consumes:
+      - application/json
+      description: Меняет название или описание категории.
+      parameters:
+      - description: ID категории
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Обновить категорию
+      tags:
+      - Categories
+      - Admin
+  /api/categories/{name}:
+    get:
+      description: Данные одной категории.
+      parameters:
+      - description: Имя категории
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Category'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Категория по имени
+      tags:
+      - Categories
+  /api/chats:
+    get:
+      description: Список уже открытых чатов.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Chat'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Мои чаты
+      tags:
+      - Chats
+    post:
+      consumes:
+      - application/json
+      description: Отправляет пользователю запрос на личный чат.
+      parameters:
+      - description: Кому отправить
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ChatRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Заявка на чат
+      tags:
+      - Chats
+  /api/chats/{id}/messages:
+    get:
+      description: История сообщений выбранного чата.
+      parameters:
+      - description: ID чата
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ChatMessage'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Сообщения чата
+      tags:
+      - Chats
+    post:
+      consumes:
+      - application/json
+      description: Создает сообщение в выбранном чате.
+      parameters:
+      - description: ID чата
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Текст сообщения
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateChatMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.ChatMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Отправить сообщение
+      tags:
+      - Chats
+  /api/chats/requests/{id}/accept:
+    post:
+      description: Принимает запрос и создает чат.
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.AcceptedChatRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Принять заявку
+      tags:
+      - Chats
+  /api/chats/requests/{id}/reject:
+    post:
+      description: Отклоняет запрос без создания чата.
+      parameters:
+      - description: ID заявки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ChatRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Отклонить заявку
+      tags:
+      - Chats
+  /api/chats/requests/incoming:
+    get:
+      description: Запросы на чат, которые отправили вам.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ChatRequest'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Входящие заявки
+      tags:
+      - Chats
+  /api/chats/requests/outgoing:
+    get:
+      description: Запросы на чат, которые отправили вы.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ChatRequest'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Исходящие заявки
+      tags:
+      - Chats
+  /api/comments/{id}:
+    delete:
+      description: Удаляет комментарий.
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Удалить комментарий
+      tags:
+      - Comments
+    put:
+      consumes:
+      - application/json
+      description: Меняет текст комментария.
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новый текст
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Comment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Обновить комментарий
+      tags:
+      - Comments
+  /api/donations:
+    post:
+      consumes:
+      - application/json
+      description: Сохраняет донат без настоящей оплаты.
+      parameters:
+      - description: Данные доната
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateDonationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Donation'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Создать донат
+      tags:
+      - Donations
+  /api/donations/received:
+    get:
+      description: Донаты, которые получили вы.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Donation'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Мои полученные донаты
+      tags:
+      - Donations
+  /api/donations/sent:
+    get:
+      description: Донаты, которые отправили вы.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Donation'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Мои отправленные донаты
+      tags:
+      - Donations
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает access и refresh токены.
+      parameters:
+      - description: Данные входа
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenPairResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Вход
+      tags:
+      - Auth
+  /api/me:
+    get:
+      description: Данные текущего пользователя.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.UserProfile'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Мой профиль
+      tags:
+      - Profile
+    put:
+      consumes:
+      - multipart/form-data
+      description: Меняет мои данные, аватарку или пароль.
+      parameters:
+      - description: Новое имя пользователя
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Email, например user@gmail.com
+        in: formData
+        name: email
+        type: string
+      - description: Новый пароль
+        in: formData
+        name: password
+        type: string
+      - description: Описание канала
+        in: formData
+        name: description
+        type: string
+      - description: Файл аватарки
+        in: formData
+        name: avatar
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Обновить профиль
+      tags:
+      - Profile
+  /api/playlists:
+    post:
+      consumes:
+      - application/json
+      description: Новый публичный плейлист.
+      parameters:
+      - description: Данные плейлиста
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePlaylistRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Playlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Создать плейлист
+      tags:
+      - Playlists
+  /api/playlists/{id}:
+    delete:
+      description: Удаляет плейлист автора.
+      parameters:
+      - description: ID плейлиста
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Удалить плейлист
+      tags:
+      - Playlists
+    get:
+      description: Плейлист и его видео.
+      parameters:
+      - description: ID плейлиста
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Playlist'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Плейлист по ID
+      tags:
+      - Playlists
+    put:
+      consumes:
+      - application/json
+      description: Меняет название или описание.
+      parameters:
+      - description: ID плейлиста
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePlaylistRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Playlist'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Обновить плейлист
+      tags:
+      - Playlists
+  /api/playlists/{id}/videos:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет ролик в плейлист.
+      parameters:
+      - description: ID плейлиста
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID видео
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddVideoToPlaylistRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Добавить видео
+      tags:
+      - Playlists
+  /api/playlists/{id}/videos/{video_id}:
+    delete:
+      description: Убирает ролик из плейлиста.
+      parameters:
+      - description: ID плейлиста
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID видео
+        in: path
+        name: video_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Убрать видео
+      tags:
+      - Playlists
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя. Email можно не указывать.
+      parameters:
+      - description: Данные регистрации
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Регистрация
+      tags:
+      - Auth
+  /api/users/{id}:
+    get:
+      description: Публичная страница канала.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.UserProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Профиль пользователя
+      tags:
+      - Profile
+  /api/users/{id}/donations:
+    get:
+      description: Публичный список полученных донатов.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Donation'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Донаты пользователя
+      tags:
+      - Donations
+  /api/users/{id}/playlists:
+    get:
+      description: Публичные плейлисты автора.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Playlist'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Плейлисты пользователя
+      tags:
+      - Playlists
+  /api/users/{id}/subscribe:
+    delete:
+      description: Отмена подписки.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Отписаться
+      tags:
+      - Subscriptions
+    post:
+      description: Подписка на автора.
+      parameters:
+      - description: ID пользователя, на которого подписываемся
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Подписаться
+      tags:
+      - Subscriptions
+  /api/users/{id}/subscribed:
+    get:
+      description: Показывает, подписан ли я на автора.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Моя подписка
+      tags:
+      - Subscriptions
+  /api/users/{id}/subscribers/count:
+    get:
+      description: Сколько людей подписано на автора.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Подписчики
+      tags:
+      - Subscriptions
+  /api/users/{id}/subscriptions/count:
+    get:
+      description: Сколько подписок у пользователя.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Подписки
+      tags:
+      - Subscriptions
+  /api/users/{id}/videos:
+    get:
+      description: Ролики выбранного автора.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Видео пользователя
+      tags:
+      - Profile
+  /api/videos:
+    get:
+      description: Видео для главной ленты.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Video'
+            type: array
+      summary: Рекомендации
+      tags:
+      - Videos
+    post:
+      consumes:
+      - multipart/form-data
+      description: Загружает видеофайл, обложку и данные ролика.
+      parameters:
+      - description: Название видео
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Описание видео
+        in: formData
+        name: description
+        type: string
+      - description: Имя категории
+        in: formData
+        name: category_name
+        type: string
+      - description: Файл видео
+        in: formData
+        name: video
+        required: true
+        type: file
+      - description: Файл обложки
+        in: formData
+        name: thumbnail
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Создать видео
+      tags:
+      - Videos
+  /api/videos/{id}:
+    delete:
+      description: Скрывает видео и оставляет архивную копию.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Удалить видео
+      tags:
+      - Videos
+    get:
+      description: Данные видео и новый просмотр.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Видео по ID
+      tags:
+      - Videos
+    put:
+      consumes:
+      - multipart/form-data
+      description: Меняет данные ролика без замены видеофайла.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Название видео
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Описание видео
+        in: formData
+        name: description
+        type: string
+      - description: Имя категории
+        in: formData
+        name: category_name
+        type: string
+      - description: Новая обложка
+        in: formData
+        name: thumbnail
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Video'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Обновить видео
+      tags:
+      - Videos
+  /api/videos/{id}/comments:
+    get:
+      description: Список комментариев под видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Comment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Комментарии видео
+      tags:
+      - Comments
+    post:
+      consumes:
+      - application/json
+      description: Добавляет комментарий к видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Текст комментария
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Comment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Создать комментарий
+      tags:
+      - Comments
+  /api/videos/{id}/like:
+    delete:
+      description: Удаляет мой лайк с видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Убрать лайк
+      tags:
+      - Likes
+    post:
+      description: Лайк от текущего пользователя.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Поставить лайк
+      tags:
+      - Likes
+  /api/videos/{id}/liked:
+    get:
+      description: Показывает, лайкнул ли я видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Мой лайк
+      tags:
+      - Likes
+  /api/videos/{id}/likes/count:
+    get:
+      description: Сколько лайков у видео.
+      parameters:
+      - description: ID видео
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Количество лайков
+      tags:
+      - Likes
+  /api/videos/allvideos:
+    get:
+      description: Админский список всех видео.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Video'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Все видео
+      tags:
+      - Admin
+      - Videos
+  /api/videos/playback-speeds:
+    get:
+      description: Доступные скорости плеера.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              items:
+                format: float64
+                type: number
+              type: array
+            type: object
+      summary: Скорости видео
+      tags:
+      - Videos
+  /api/videos/search:
+    get:
+      description: Ищет ролики по названию.
+      parameters:
+      - description: Часть названия видео
+        in: query
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Video'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Поиск видео
+      tags:
+      - Videos
+  /auth/refresh:
+    get:
+      description: Меняет refresh token на новую пару токенов.
+      parameters:
+      - description: Refresh token
+        in: header
+        name: Refresh-Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenPairResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Обновить токены
+      tags:
+      - Auth
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает access и refresh токены.
+      parameters:
+      - description: Данные входа
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenPairResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Вход
+      tags:
+      - Auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя. Email можно не указывать.
+      parameters:
+      - description: Данные регистрации
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: Регистрация
+      tags:
+      - Auth
+  /ping:
+    get:
+      description: Быстрый ответ, что backend жив.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonResponse'
+      summary: Проверка сервера
+      tags:
+      - System
+  /ws/chats/{id}:
+    get:
+      description: Адрес для live-сообщений. Токен передается в access_token.
+      parameters:
+      - description: ID чата
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Access token
+        in: query
+        name: access_token
+        required: true
+        type: string
+      responses:
+        "101":
+          description: WebSocket соединение открыто
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpdelivery.CommonError'
+      summary: WebSocket чата
+      tags:
+      - WebSocket
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -17,12 +17,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/ping",
+                                                                  "raw":  "http://localhost:8080/ping",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "ping"
                                                                            ]
@@ -49,12 +49,12 @@
                                                                    "raw":  "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/auth/sign-up",
+                                                                  "raw":  "http://localhost:8080/auth/sign-up",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "auth",
                                                                                "sign-up"
@@ -77,12 +77,12 @@
                                                                    "raw":  "{\n  \"username\": \"john_doe\",\n  \"password\": \"password123\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/auth/sign-in",
+                                                                  "raw":  "http://localhost:8080/auth/sign-in",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "auth",
                                                                                "sign-in"
@@ -101,12 +101,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/auth/refresh",
+                                                                  "raw":  "http://localhost:8080/auth/refresh",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "auth",
                                                                                "refresh"
@@ -129,12 +129,12 @@
                                                                    "raw":  "{\n  \"username\": \"jane_doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password456\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/register",
+                                                                  "raw":  "http://localhost:8080/api/register",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "register"
@@ -157,12 +157,12 @@
                                                                    "raw":  "{\n  \"username\": \"jane_doe\",\n  \"password\": \"password456\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/login",
+                                                                  "raw":  "http://localhost:8080/api/login",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "login"
@@ -186,12 +186,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/me",
+                                                                  "raw":  "http://localhost:8080/api/me",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "me"
@@ -240,12 +240,12 @@
                                                                                 ]
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/me",
+                                                                  "raw":  "http://localhost:8080/api/me",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "me"
@@ -261,12 +261,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1",
+                                                                  "raw":  "http://localhost:8080/api/users/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -283,12 +283,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/videos",
+                                                                  "raw":  "http://localhost:8080/api/users/1/videos",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -306,12 +306,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/donations",
+                                                                  "raw":  "http://localhost:8080/api/users/1/donations",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -329,12 +329,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/subscribers/count",
+                                                                  "raw":  "http://localhost:8080/api/users/1/subscribers/count",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -353,12 +353,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/subscriptions/count",
+                                                                  "raw":  "http://localhost:8080/api/users/1/subscriptions/count",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -382,12 +382,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos",
+                                                                  "raw":  "http://localhost:8080/api/videos",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos"
@@ -403,12 +403,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/search?title=golang",
+                                                                  "raw":  "http://localhost:8080/api/videos/search?title=golang",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -431,12 +431,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/playback-speeds",
+                                                                  "raw":  "http://localhost:8080/api/videos/playback-speeds",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -453,12 +453,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1",
+                                                                  "raw":  "http://localhost:8080/api/videos/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -478,12 +478,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/allvideos",
+                                                                  "raw":  "http://localhost:8080/api/videos/allvideos",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -533,12 +533,12 @@
                                                                                 ]
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos",
+                                                                  "raw":  "http://localhost:8080/api/videos",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos"
@@ -582,12 +582,12 @@
                                                                                 ]
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1",
+                                                                  "raw":  "http://localhost:8080/api/videos/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -607,12 +607,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1",
+                                                                  "raw":  "http://localhost:8080/api/videos/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -632,12 +632,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/admin/videos/1",
+                                                                  "raw":  "http://localhost:8080/api/admin/videos/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "admin",
@@ -663,12 +663,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/like",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/like",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -689,12 +689,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/like",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/like",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -715,12 +715,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/liked",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/liked",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -738,12 +738,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/likes/count",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/likes/count",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -767,12 +767,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/comments",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/comments",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -801,12 +801,12 @@
                                                                    "raw":  "{\n  \"text\": \"Great video! Very helpful.\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/videos/1/comments",
+                                                                  "raw":  "http://localhost:8080/api/videos/1/comments",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "videos",
@@ -835,12 +835,12 @@
                                                                    "raw":  "{\n  \"text\": \"Updated comment text\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/comments/1",
+                                                                  "raw":  "http://localhost:8080/api/comments/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "comments",
@@ -860,12 +860,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/comments/1",
+                                                                  "raw":  "http://localhost:8080/api/comments/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "comments",
@@ -890,12 +890,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/subscribe",
+                                                                  "raw":  "http://localhost:8080/api/users/1/subscribe",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -916,12 +916,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/subscribe",
+                                                                  "raw":  "http://localhost:8080/api/users/1/subscribe",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -942,12 +942,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/users/1/subscribed",
+                                                                  "raw":  "http://localhost:8080/api/users/1/subscribed",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "users",
@@ -970,12 +970,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/categories",
+                                                                  "raw":  "http://localhost:8080/api/categories",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "categories"
@@ -991,12 +991,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/categories/1",
+                                                                  "raw":  "http://localhost:8080/api/categories/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "categories",
@@ -1024,12 +1024,12 @@
                                                                    "raw":  "{\n  \"name\": \"Technology\",\n  \"description\": \"Technology related videos\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/categories",
+                                                                  "raw":  "http://localhost:8080/api/categories",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "categories"
@@ -1056,12 +1056,12 @@
                                                                    "raw":  "{\n  \"name\": \"Technology Updated\",\n  \"description\": \"Updated description\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/categories/1",
+                                                                  "raw":  "http://localhost:8080/api/categories/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "categories",
@@ -1081,12 +1081,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/categories/1",
+                                                                  "raw":  "http://localhost:8080/api/categories/1",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "categories",
@@ -1119,12 +1119,12 @@
                                                                    "raw":  "{\n  \"amount\": 10.50,\n  \"receiver_id\": 2,\n  \"video_id\": 1,\n  \"message\": \"Great content!\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/donations",
+                                                                  "raw":  "http://localhost:8080/api/donations",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "donations"
@@ -1143,12 +1143,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/donations/sent",
+                                                                  "raw":  "http://localhost:8080/api/donations/sent",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "donations",
@@ -1168,12 +1168,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/donations/received",
+                                                                  "raw":  "http://localhost:8080/api/donations/received",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "donations",
@@ -1198,12 +1198,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats",
+                                                                  "raw":  "http://localhost:8080/api/chats",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats"
@@ -1230,12 +1230,12 @@
                                                                    "raw":  "{\n  \"user_id\": 2\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats",
+                                                                  "raw":  "http://localhost:8080/api/chats",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats"
@@ -1254,12 +1254,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/requests/incoming",
+                                                                  "raw":  "http://localhost:8080/api/chats/requests/incoming",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1280,12 +1280,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/requests/outgoing",
+                                                                  "raw":  "http://localhost:8080/api/chats/requests/outgoing",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1306,12 +1306,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/requests/1/accept",
+                                                                  "raw":  "http://localhost:8080/api/chats/requests/1/accept",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1333,12 +1333,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/requests/1/reject",
+                                                                  "raw":  "http://localhost:8080/api/chats/requests/1/reject",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1360,12 +1360,12 @@
                                                                      }
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/1/messages",
+                                                                  "raw":  "http://localhost:8080/api/chats/1/messages",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1394,12 +1394,12 @@
                                                                    "raw":  "{\n  \"text\": \"Hello! How are you?\"\n}"
                                                                },
                                                       "url":  {
-                                                                  "raw":  "http://localhost:6666/api/chats/1/messages",
+                                                                  "raw":  "http://localhost:8080/api/chats/1/messages",
                                                                   "protocol":  "http",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "api",
                                                                                "chats",
@@ -1417,12 +1417,12 @@
 
                                                                  ],
                                                       "url":  {
-                                                                  "raw":  "ws://localhost:6666/ws/chats/1?access_token={{access_token}}",
+                                                                  "raw":  "ws://localhost:8080/ws/chats/1?access_token={{access_token}}",
                                                                   "protocol":  "ws",
                                                                   "host":  [
                                                                                "localhost"
                                                                            ],
-                                                                  "port":  "6666",
+                                                                  "port":  "8080",
                                                                   "path":  [
                                                                                "ws",
                                                                                "chats",
@@ -1453,3 +1453,4 @@
                      }
                  ]
 }
+

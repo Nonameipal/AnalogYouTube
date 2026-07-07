@@ -10,6 +10,19 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 )
 
+// CreateComment godoc
+// @Summary Создать комментарий
+// @Description Добавляет комментарий к видео.
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID видео"
+// @Param input body dto.CreateCommentRequest true "Текст комментария"
+// @Success 201 {object} domain.Comment
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Router /api/videos/{id}/comments [post]
 func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -38,6 +51,15 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, comment)
 }
 
+// GetVideoComments godoc
+// @Summary Комментарии видео
+// @Description Список комментариев под видео.
+// @Tags Comments
+// @Produce json
+// @Param id path int true "ID видео"
+// @Success 200 {array} domain.Comment
+// @Failure 400 {object} CommonError
+// @Router /api/videos/{id}/comments [get]
 func (h *Handler) GetVideoComments(w http.ResponseWriter, r *http.Request) {
 	videoID, err := getIDFromRequest(r, "id")
 	if err != nil {
@@ -54,6 +76,20 @@ func (h *Handler) GetVideoComments(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, comments)
 }
 
+// UpdateComment godoc
+// @Summary Обновить комментарий
+// @Description Меняет текст комментария.
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID комментария"
+// @Param input body dto.UpdateCommentRequest true "Новый текст"
+// @Success 200 {object} domain.Comment
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/comments/{id} [put]
 func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -88,6 +124,17 @@ func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, comment)
 }
 
+// DeleteComment godoc
+// @Summary Удалить комментарий
+// @Description Удаляет комментарий.
+// @Tags Comments
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID комментария"
+// @Success 200 {object} CommonResponse
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/comments/{id} [delete]
 func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {

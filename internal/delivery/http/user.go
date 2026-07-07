@@ -8,6 +8,16 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/pkg"
 )
 
+// GetUserProfile godoc
+// @Summary Профиль пользователя
+// @Description Публичная страница канала.
+// @Tags Profile
+// @Produce json
+// @Param id path int true "ID пользователя"
+// @Success 200 {object} domain.UserProfile
+// @Failure 400 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/users/{id} [get]
 func (h *Handler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	userID, err := getIDFromRequest(r, "id")
 	if err != nil {
@@ -39,6 +49,16 @@ func (h *Handler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, profile)
 }
 
+// GetUserVideos godoc
+// @Summary Видео пользователя
+// @Description Ролики выбранного автора.
+// @Tags Profile
+// @Produce json
+// @Param id path int true "ID пользователя"
+// @Success 200 {array} domain.Video
+// @Failure 400 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/users/{id}/videos [get]
 func (h *Handler) GetUserVideos(w http.ResponseWriter, r *http.Request) {
 	userID, err := getIDFromRequest(r, "id")
 	if err != nil {
@@ -55,6 +75,23 @@ func (h *Handler) GetUserVideos(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, videos)
 }
 
+// UpdateMe godoc
+// @Summary Обновить профиль
+// @Description Меняет мои данные, аватарку или пароль.
+// @Tags Profile
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param username formData string true "Новое имя пользователя"
+// @Param email formData string false "Email, например user@gmail.com"
+// @Param password formData string false "Новый пароль"
+// @Param description formData string false "Описание канала"
+// @Param avatar formData file false "Файл аватарки"
+// @Success 200 {object} domain.User
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Failure 422 {object} CommonError
+// @Router /api/me [put]
 func (h *Handler) UpdateMe(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {

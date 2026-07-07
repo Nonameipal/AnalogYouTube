@@ -10,6 +10,18 @@ import (
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
 )
 
+// CreateDonation godoc
+// @Summary Создать донат
+// @Description Сохраняет донат без настоящей оплаты.
+// @Tags Donations
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body dto.CreateDonationRequest true "Данные доната"
+// @Success 201 {object} domain.Donation
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Router /api/donations [post]
 func (h *Handler) CreateDonation(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -37,6 +49,15 @@ func (h *Handler) CreateDonation(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, donation)
 }
 
+// GetSentDonations godoc
+// @Summary Мои отправленные донаты
+// @Description Донаты, которые отправили вы.
+// @Tags Donations
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.Donation
+// @Failure 401 {object} CommonError
+// @Router /api/donations/sent [get]
 func (h *Handler) GetSentDonations(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -53,6 +74,15 @@ func (h *Handler) GetSentDonations(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, donations)
 }
 
+// GetReceivedDonations godoc
+// @Summary Мои полученные донаты
+// @Description Донаты, которые получили вы.
+// @Tags Donations
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.Donation
+// @Failure 401 {object} CommonError
+// @Router /api/donations/received [get]
 func (h *Handler) GetReceivedDonations(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -69,6 +99,15 @@ func (h *Handler) GetReceivedDonations(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, donations)
 }
 
+// GetUserDonations godoc
+// @Summary Донаты пользователя
+// @Description Публичный список полученных донатов.
+// @Tags Donations
+// @Produce json
+// @Param id path int true "ID пользователя"
+// @Success 200 {array} domain.Donation
+// @Failure 400 {object} CommonError
+// @Router /api/users/{id}/donations [get]
 func (h *Handler) GetUserDonations(w http.ResponseWriter, r *http.Request) {
 	userID, err := getIDFromRequest(r, "id")
 	if err != nil {

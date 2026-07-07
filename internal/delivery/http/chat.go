@@ -21,6 +21,18 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// SendChatRequest godoc
+// @Summary Заявка на чат
+// @Description Отправляет пользователю запрос на личный чат.
+// @Tags Chats
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body dto.CreateChatRequest true "Кому отправить"
+// @Success 200 {object} domain.ChatRequest
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Router /api/chats [post]
 func (h *Handler) SendChatRequest(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -43,6 +55,15 @@ func (h *Handler) SendChatRequest(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, request)
 }
 
+// GetMyChats godoc
+// @Summary Мои чаты
+// @Description Список уже открытых чатов.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.Chat
+// @Failure 401 {object} CommonError
+// @Router /api/chats [get]
 func (h *Handler) GetMyChats(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -59,6 +80,15 @@ func (h *Handler) GetMyChats(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, chats)
 }
 
+// GetIncomingChatRequests godoc
+// @Summary Входящие заявки
+// @Description Запросы на чат, которые отправили вам.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.ChatRequest
+// @Failure 401 {object} CommonError
+// @Router /api/chats/requests/incoming [get]
 func (h *Handler) GetIncomingChatRequests(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -75,6 +105,15 @@ func (h *Handler) GetIncomingChatRequests(w http.ResponseWriter, r *http.Request
 	writeJSON(w, http.StatusOK, requests)
 }
 
+// GetOutgoingChatRequests godoc
+// @Summary Исходящие заявки
+// @Description Запросы на чат, которые отправили вы.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.ChatRequest
+// @Failure 401 {object} CommonError
+// @Router /api/chats/requests/outgoing [get]
 func (h *Handler) GetOutgoingChatRequests(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -91,6 +130,18 @@ func (h *Handler) GetOutgoingChatRequests(w http.ResponseWriter, r *http.Request
 	writeJSON(w, http.StatusOK, requests)
 }
 
+// AcceptChatRequest godoc
+// @Summary Принять заявку
+// @Description Принимает запрос и создает чат.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID заявки"
+// @Success 200 {object} domain.AcceptedChatRequest
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/chats/requests/{id}/accept [post]
 func (h *Handler) AcceptChatRequest(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -113,6 +164,18 @@ func (h *Handler) AcceptChatRequest(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, result)
 }
 
+// RejectChatRequest godoc
+// @Summary Отклонить заявку
+// @Description Отклоняет запрос без создания чата.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID заявки"
+// @Success 200 {object} domain.ChatRequest
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/chats/requests/{id}/reject [post]
 func (h *Handler) RejectChatRequest(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -135,6 +198,17 @@ func (h *Handler) RejectChatRequest(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, request)
 }
 
+// GetChatMessages godoc
+// @Summary Сообщения чата
+// @Description История сообщений выбранного чата.
+// @Tags Chats
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID чата"
+// @Success 200 {array} domain.ChatMessage
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/chats/{id}/messages [get]
 func (h *Handler) GetChatMessages(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -157,6 +231,19 @@ func (h *Handler) GetChatMessages(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, messages)
 }
 
+// CreateChatMessage godoc
+// @Summary Отправить сообщение
+// @Description Создает сообщение в выбранном чате.
+// @Tags Chats
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID чата"
+// @Param input body dto.CreateChatMessageRequest true "Текст сообщения"
+// @Success 201 {object} domain.ChatMessage
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/chats/{id}/messages [post]
 func (h *Handler) CreateChatMessage(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -187,6 +274,16 @@ func (h *Handler) CreateChatMessage(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, message)
 }
 
+// ChatWebSocket godoc
+// @Summary WebSocket чата
+// @Description Адрес для live-сообщений. Токен передается в access_token.
+// @Tags WebSocket
+// @Param id path int true "ID чата"
+// @Param access_token query string true "Access token"
+// @Success 101 {string} string "WebSocket соединение открыто"
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /ws/chats/{id} [get]
 func (h *Handler) ChatWebSocket(w http.ResponseWriter, r *http.Request) {
 	userID, err := h.getUserIDFromWebSocketRequest(r)
 	if err != nil {

@@ -44,7 +44,7 @@ func Load() error {
 		AppParams: AppParams{
 			ServerURL:  envString("SERVER_URL", "localhost"),
 			ServerName: envString("SERVER_NAME", "GlobalServer"),
-			PortRun:    envString("SERVER_PORT", "6666"),
+			PortRun:    envString("SERVER_PORT", "8080"),
 			GinMode:    envString("GIN_MODE", "debug"),
 		},
 		PostgresParams: PostgresParams{

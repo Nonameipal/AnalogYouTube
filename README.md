@@ -36,8 +36,8 @@ AnalogYouTube - это backend-проект на Go для сервиса, по�
 ```env
 SERVER_URL=localhost
 SERVER_NAME=GlobalServer
-PORT=6666
-MODE=debug
+SERVER_PORT=8080
+GIN_MODE=debug
 
 JWT_SECRET=Scibidi_toilet
 ACCESS_TOKEN_TTL_MINUTES=15
@@ -88,12 +88,18 @@ Backend вызывает бинарник как `ffmpeg`, поэтому он �
 go run cmd/main.go
 ```
 
-По умолчанию сервер запускается на порту `6666`.
+По умолчанию сервер запускается на порту `8080`.
 
 Проверка, что сервер работает:
 
 ```http
-GET http://localhost:6666/ping
+GET http://localhost:8080/ping
+```
+
+Swagger документация:
+
+```http
+GET http://localhost:8080/swagger
 ```
 
 ## Основные endpoints

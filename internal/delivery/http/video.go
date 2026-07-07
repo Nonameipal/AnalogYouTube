@@ -11,6 +11,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// CreateVideo godoc
+// @Summary Создать видео
+// @Description Загружает видеофайл, обложку и данные ролика.
+// @Tags Videos
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param title formData string true "Название видео"
+// @Param description formData string false "Описание видео"
+// @Param category_name formData string false "Имя категории"
+// @Param video formData file true "Файл видео"
+// @Param thumbnail formData file true "Файл обложки"
+// @Success 201 {object} domain.Video
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Router /api/videos [post]
 func (h *Handler) CreateVideo(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -79,6 +95,16 @@ func (h *Handler) CreateVideo(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, video)
 }
 
+// GetAllVideos godoc
+// @Summary Все видео
+// @Description Админский список всех видео.
+// @Tags Admin,Videos
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} domain.Video
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/videos/allvideos [get]
 func (h *Handler) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	videos, err := h.service.GetAllVideos()
 	if err != nil {
@@ -89,6 +115,15 @@ func (h *Handler) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, videos)
 }
 
+// SearchVideosByTitle godoc
+// @Summary Поиск видео
+// @Description Ищет ролики по названию.
+// @Tags Videos
+// @Produce json
+// @Param title query string true "Часть названия видео"
+// @Success 200 {array} domain.Video
+// @Failure 400 {object} CommonError
+// @Router /api/videos/search [get]
 func (h *Handler) SearchVideosByTitle(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Query().Get("title")
 
@@ -101,6 +136,13 @@ func (h *Handler) SearchVideosByTitle(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, videos)
 }
 
+// GetRecommendedVideos godoc
+// @Summary Рекомендации
+// @Description Видео для главной ленты.
+// @Tags Videos
+// @Produce json
+// @Success 200 {array} domain.Video
+// @Router /api/videos [get]
 func (h *Handler) GetRecommendedVideos(w http.ResponseWriter, r *http.Request) {
 	videos, err := h.service.GetRecommendedVideos()
 	if err != nil {
@@ -111,6 +153,16 @@ func (h *Handler) GetRecommendedVideos(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, videos)
 }
 
+// GetVideoByID godoc
+// @Summary Видео по ID
+// @Description Данные видео и новый просмотр.
+// @Tags Videos
+// @Produce json
+// @Param id path int true "ID видео"
+// @Success 200 {object} domain.Video
+// @Failure 400 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/videos/{id} [get]
 func (h *Handler) GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	videoID, err := getIDFromRequest(r, "id")
 	if err != nil {
@@ -132,6 +184,23 @@ func (h *Handler) GetVideoByID(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, video)
 }
 
+// UpdateVideo godoc
+// @Summary Обновить видео
+// @Description Меняет данные ролика без замены видеофайла.
+// @Tags Videos
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID видео"
+// @Param title formData string true "Название видео"
+// @Param description formData string false "Описание видео"
+// @Param category_name formData string false "Имя категории"
+// @Param thumbnail formData file false "Новая обложка"
+// @Success 200 {object} domain.Video
+// @Failure 400 {object} CommonError
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/videos/{id} [put]
 func (h *Handler) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -189,6 +258,18 @@ func (h *Handler) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, video)
 }
 
+// DeleteVideo godoc
+// @Summary Удалить видео
+// @Description Скрывает видео и оставляет архивную копию.
+// @Tags Videos
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID видео"
+// @Success 200 {object} CommonResponse
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Failure 404 {object} CommonError
+// @Router /api/videos/{id} [delete]
 func (h *Handler) DeleteVideo(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -225,6 +306,17 @@ func (h *Handler) DeleteVideo(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, CommonResponse{Message: "Video deleted and archived successfully"})
 }
 
+// AdminDeleteVideo godoc
+// @Summary Админское удаление
+// @Description Полностью удаляет видео.
+// @Tags Admin,Videos
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "ID видео"
+// @Success 200 {object} CommonResponse
+// @Failure 401 {object} CommonError
+// @Failure 403 {object} CommonError
+// @Router /api/admin/videos/{id} [delete]
 func (h *Handler) AdminDeleteVideo(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserIDFromContext(r)
 	if !ok {
@@ -294,6 +386,13 @@ func (h *Handler) cleanupFailedVideoUpload(userID int, userRole string, videoID 
 	}
 }
 
+// GetPlaybackSpeeds godoc
+// @Summary Скорости видео
+// @Description Доступные скорости плеера.
+// @Tags Videos
+// @Produce json
+// @Success 200 {object} map[string][]float64
+// @Router /api/videos/playback-speeds [get]
 func (h *Handler) GetPlaybackSpeeds(w http.ResponseWriter, r *http.Request) {
 	speeds := h.service.GetPlaybackSpeeds()
 
