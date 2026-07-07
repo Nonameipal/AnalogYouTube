@@ -105,6 +105,46 @@ func (r *Repository) GetRecommendedVideos() ([]domain.Video, error) {
 	return videos, nil
 }
 
+func (r *Repository) GetRecommendationCandidateVideos(limit int) ([]domain.Video, error) {
+	if limit <= 0 {
+		limit = 200
+	}
+
+	ctx := context.Background()
+	rows, err := r.db.Query(ctx,
+		`SELECT id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
+		FROM videos
+		WHERE status = $1
+		ORDER BY created_at DESC
+		LIMIT $2`, domain.VideoStatusActive, limit)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	var dbVideos []dbModels.Video
+	for rows.Next() {
+		var video dbModels.Video
+		if err := rows.Scan(
+			&video.ID, &video.AuthorID, &video.CategoryID, &video.Title, &video.Description,
+			&video.VideoURL, &video.ThumbnailURL, &video.Views, &video.Status, &video.CreatedAt, &video.UpdatedAt); err != nil {
+			return nil, r.translateError(err)
+		}
+		dbVideos = append(dbVideos, video)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, r.translateError(err)
+	}
+
+	videos := make([]domain.Video, 0, len(dbVideos))
+	for _, video := range dbVideos {
+		videos = append(videos, video.ToDomain())
+	}
+
+	return videos, nil
+}
+
 func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 	ctx := context.Background()
 	var dbVideo dbModels.Video
@@ -119,6 +159,44 @@ func (r *Repository) GetVideoByID(id int) (domain.Video, error) {
 	}
 
 	return dbVideo.ToDomain(), nil
+}
+
+func (r *Repository) GetVideosByIDs(ids []int) ([]domain.Video, error) {
+	if len(ids) == 0 {
+		return []domain.Video{}, nil
+	}
+
+	ctx := context.Background()
+	rows, err := r.db.Query(ctx,
+		`SELECT id, author_id, category_id, title, description, video_url, thumbnail_url, views, status, created_at, updated_at
+		FROM videos
+		WHERE id = ANY($1) AND status = $2`, ids, domain.VideoStatusActive)
+	if err != nil {
+		return nil, r.translateError(err)
+	}
+	defer rows.Close()
+
+	var dbVideos []dbModels.Video
+	for rows.Next() {
+		var video dbModels.Video
+		if err := rows.Scan(
+			&video.ID, &video.AuthorID, &video.CategoryID, &video.Title, &video.Description,
+			&video.VideoURL, &video.ThumbnailURL, &video.Views, &video.Status, &video.CreatedAt, &video.UpdatedAt); err != nil {
+			return nil, r.translateError(err)
+		}
+		dbVideos = append(dbVideos, video)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, r.translateError(err)
+	}
+
+	videos := make([]domain.Video, 0, len(dbVideos))
+	for _, video := range dbVideos {
+		videos = append(videos, video.ToDomain())
+	}
+
+	return videos, nil
 }
 
 func (r *Repository) IncrementVideoViews(id int) error {

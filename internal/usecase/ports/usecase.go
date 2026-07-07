@@ -11,12 +11,18 @@ type UsecaseI interface {
 	CreateVideo(authorID int, video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
+	GetPersonalizedRecommendedVideos(userID int) ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
 	GetUserVideos(userID int) ([]domain.Video, error)
 	SearchVideosByTitle(title string) ([]domain.Video, error)
+	SearchVideosByTitleForUser(userID *int, title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
+	SaveVideoWatchProgress(userID int, videoID int, watchedSeconds int, durationSeconds int) (domain.VideoWatchHistory, error)
 	UpdateVideo(userID int, userRole string, video domain.Video) (domain.Video, error)
 	DeleteVideo(userID int, userRole string, videoID int) error
+	GetAllTags() ([]domain.Tag, error)
+	GetVideoTags(videoID int) ([]domain.Tag, error)
+	UpdateVideoTags(userID int, userRole string, videoID int, tagNames []string) ([]domain.Tag, error)
 
 	GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error)
 	GetPlaybackSpeeds() []float64

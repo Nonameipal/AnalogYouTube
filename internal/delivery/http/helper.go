@@ -69,3 +69,21 @@ func (h *Handler) generateNewTokenPair(userID int, userRole string) (string, str
 
 	return accessToken, refreshToken, nil
 }
+
+func (h *Handler) optionalUserIDFromRequest(r *http.Request) *int {
+	if userID, ok := getUserIDFromContext(r); ok {
+		return &userID
+	}
+
+	tokenString, err := h.extractTokenFromHeader(r, authorizationHeader)
+	if err != nil {
+		return nil
+	}
+
+	userID, isRefresh, _, err := pkg.ParseToken(tokenString)
+	if err != nil || isRefresh {
+		return nil
+	}
+
+	return &userID
+}

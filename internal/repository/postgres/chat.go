@@ -61,8 +61,8 @@ func (r *Repository) GetChatBetweenUsers(firstUserID int, secondUserID int) (dom
 	err := r.db.QueryRow(ctx,
 		`SELECT id, first_user_id, second_user_id, created_at
 		FROM chats
-		WHERE LEAST(first_user_id, second_user_id) = LEAST($1, $2)
-		AND GREATEST(first_user_id, second_user_id) = GREATEST($1, $2)`,
+		WHERE LEAST(first_user_id, second_user_id) = LEAST($1::int, $2::int)
+		AND GREATEST(first_user_id, second_user_id) = GREATEST($1::int, $2::int)`,
 		firstUserID,
 		secondUserID,
 	).Scan(&dbChat.ID, &dbChat.FirstUserID, &dbChat.SecondUserID, &dbChat.CreatedAt)

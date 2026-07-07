@@ -12,7 +12,9 @@ type RepositoryI interface {
 	CreateVideo(video domain.Video) (domain.Video, error)
 	GetAllVideos() ([]domain.Video, error)
 	GetRecommendedVideos() ([]domain.Video, error)
+	GetRecommendationCandidateVideos(limit int) ([]domain.Video, error)
 	GetVideoByID(id int) (domain.Video, error)
+	GetVideosByIDs(ids []int) ([]domain.Video, error)
 	GetVideosByAuthorID(authorID int) ([]domain.Video, error)
 	SearchVideosByTitle(title string) ([]domain.Video, error)
 	IncrementVideoViews(id int) error
@@ -21,6 +23,15 @@ type RepositoryI interface {
 	GetVideoQualities(videoID int) ([]domain.VideoQuality, error)
 	DeleteVideo(id int) error
 	ArchiveDeletedVideo(videoID int, archiveURL string) error
+	SaveVideoWatchProgress(progress domain.VideoWatchHistory) (domain.VideoWatchHistory, error)
+	GetUserWatchHistory(userID int, limit int) ([]domain.VideoWatchHistory, error)
+	SaveVideoSearchHistory(history domain.VideoSearchHistory) error
+	GetUserSearchHistory(userID int, limit int) ([]domain.VideoSearchHistory, error)
+
+	GetAllTags() ([]domain.Tag, error)
+	GetVideoTags(videoID int) ([]domain.Tag, error)
+	GetTagsByVideoIDs(videoIDs []int) (map[int][]domain.Tag, error)
+	ReplaceVideoTags(videoID int, tagNames []string) ([]domain.Tag, error)
 
 	CreateCategory(category domain.Category) (domain.Category, error)
 	GetAllCategories() ([]domain.Category, error)
@@ -37,6 +48,7 @@ type RepositoryI interface {
 	UnlikeVideo(userID int, videoID int) error
 	GetVideoLikesCount(videoID int) (int, error)
 	IsVideoLikedByUser(userID int, videoID int) (bool, error)
+	GetUserLikedVideoIDs(userID int) ([]int, error)
 
 	SubscribeToUser(subscriberID int, authorID int) error
 	UnsubscribeFromUser(subscriberID int, authorID int) error
@@ -45,12 +57,14 @@ type RepositoryI interface {
 	IsSubscribed(subscriberID int, authorID int) (bool, error)
 	GetSubscribers(authorID int) ([]domain.User, error)
 	GetSubscriptions(subscriberID int) ([]domain.User, error)
+	GetSubscribedAuthorIDs(subscriberID int) ([]int, error)
 
 	CreateComment(comment domain.Comment) (domain.Comment, error)
 	GetVideoComments(videoID int) ([]domain.Comment, error)
 	GetCommentByID(commentID int) (domain.Comment, error)
 	UpdateComment(comment domain.Comment) (domain.Comment, error)
 	DeleteComment(commentID int) error
+	GetUserCommentedVideoIDs(userID int) ([]int, error)
 
 	GetChatByID(chatID int) (domain.Chat, error)
 	GetUserChats(userID int) ([]domain.Chat, error)
@@ -72,4 +86,6 @@ type RepositoryI interface {
 	AddVideoToPlaylist(playlistID int, videoID int) error
 	RemoveVideoFromPlaylist(playlistID int, videoID int) error
 	GetPlaylistVideos(playlistID int) ([]domain.Video, error)
+	GetUserPlaylistVideoIDs(userID int) ([]int, error)
+	GetVideoPopularity(videoIDs []int) (map[int]domain.VideoPopularity, error)
 }

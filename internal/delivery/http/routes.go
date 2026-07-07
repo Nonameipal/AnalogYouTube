@@ -32,8 +32,11 @@ func (h *Handler) InitRoutes() error {
 
 		api.HandleFunc("/videos/playback-speeds", h.GetPlaybackSpeeds).Methods(http.MethodGet)
 		api.HandleFunc("/videos/{id}", h.GetVideoByID).Methods(http.MethodGet)
+		api.HandleFunc("/videos/{id}/tags", h.GetVideoTags).Methods(http.MethodGet)
 		api.HandleFunc("/videos/{id}/likes/count", h.GetVideoLikesCount).Methods(http.MethodGet)
 		api.HandleFunc("/videos/{id}/comments", h.GetVideoComments).Methods(http.MethodGet)
+
+		api.HandleFunc("/tags", h.GetAllTags).Methods(http.MethodGet)
 
 		api.HandleFunc("/categories", h.GetAllCategories).Methods(http.MethodGet)
 		api.HandleFunc("/categories/{name}", h.GetCategoryByName).Methods(http.MethodGet)
@@ -53,10 +56,13 @@ func (h *Handler) InitRoutes() error {
 	{
 		auth.HandleFunc("/me", h.Me).Methods(http.MethodGet)
 		auth.HandleFunc("/me", h.UpdateMe).Methods(http.MethodPut)
+		auth.HandleFunc("/me/recommendations", h.GetPersonalizedRecommendedVideos).Methods(http.MethodGet)
 
 		auth.HandleFunc("/videos", h.CreateVideo).Methods(http.MethodPost)
 		auth.HandleFunc("/videos/{id}", h.UpdateVideo).Methods(http.MethodPut)
 		auth.HandleFunc("/videos/{id}", h.DeleteVideo).Methods(http.MethodDelete)
+		auth.HandleFunc("/videos/{id}/watch-progress", h.SaveVideoWatchProgress).Methods(http.MethodPost)
+		auth.HandleFunc("/videos/{id}/tags", h.UpdateVideoTags).Methods(http.MethodPost)
 
 		auth.HandleFunc("/videos/{id}/like", h.LikeVideo).Methods(http.MethodPost)
 		auth.HandleFunc("/videos/{id}/like", h.UnlikeVideo).Methods(http.MethodDelete)

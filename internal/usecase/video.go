@@ -27,7 +27,25 @@ func (uc *Usecase) CreateVideo(authorID int, video domain.Video) (domain.Video, 
 	video.AuthorID = authorID
 	video.Status = domain.VideoStatusActive
 
-	return uc.repository.CreateVideo(video)
+	createdVideo, err := uc.repository.CreateVideo(video)
+	if err != nil {
+		return domain.Video{}, err
+	}
+
+	if video.Tags != nil {
+		tagNames, err := tagNamesFromTags(video.Tags)
+		if err != nil {
+			return domain.Video{}, err
+		}
+
+		tags, err := uc.repository.ReplaceVideoTags(createdVideo.ID, tagNames)
+		if err != nil {
+			return domain.Video{}, err
+		}
+		createdVideo.Tags = tags
+	}
+
+	return createdVideo, nil
 }
 
 func (uc *Usecase) resolveCategoryIDByName(categoryName *string) (*int, error) {
@@ -57,6 +75,28 @@ func (uc *Usecase) GetRecommendedVideos() ([]domain.Video, error) {
 	return uc.repository.GetRecommendedVideos()
 }
 
+func (uc *Usecase) GetPersonalizedRecommendedVideos(userID int) ([]domain.Video, error) {
+	if err := validateRecommendationUserID(userID); err != nil {
+		return nil, err
+	}
+	if _, err := uc.GetUserByID(userID); err != nil {
+		return nil, err
+	}
+
+	candidates, err := uc.repository.GetRecommendationCandidateVideos(recommendationCandidates)
+	if err != nil {
+		return nil, err
+	}
+
+	profile, err := uc.buildRecommendationProfile(userID, candidates)
+	if err != nil {
+		return nil, err
+	}
+
+	scoredCandidates := buildRecommendationCandidates(candidates, profile)
+	return uc.recommendationEngine.Recommend(profile, scoredCandidates, recommendationLimit), nil
+}
+
 func (uc *Usecase) GetVideoByID(id int) (domain.Video, error) {
 	if id <= 0 {
 		return domain.Video{}, errs.ErrInvalidFieldValue
@@ -74,6 +114,11 @@ func (uc *Usecase) GetVideoByID(id int) (domain.Video, error) {
 		return domain.Video{}, err
 	}
 	video.Qualities = qualities
+	tags, err := uc.repository.GetVideoTags(id)
+	if err != nil {
+		return domain.Video{}, err
+	}
+	video.Tags = tags
 
 	return video, nil
 }
@@ -137,7 +182,27 @@ func (uc *Usecase) UpdateVideo(userID int, userRole string, video domain.Video) 
 		video.ThumbnailURL = oldVideo.ThumbnailURL
 	}
 
-	return uc.repository.UpdateVideo(video)
+	updatedVideo, err := uc.repository.UpdateVideo(video)
+	if err != nil {
+		return domain.Video{}, err
+	}
+
+	if video.Tags != nil {
+		tagNames, err := tagNamesFromTags(video.Tags)
+		if err != nil {
+			return domain.Video{}, err
+		}
+
+		tags, err := uc.repository.ReplaceVideoTags(updatedVideo.ID, tagNames)
+		if err != nil {
+			return domain.Video{}, err
+		}
+		updatedVideo.Tags = tags
+	} else {
+		updatedVideo.Tags = oldVideo.Tags
+	}
+
+	return updatedVideo, nil
 }
 
 func (uc *Usecase) DeleteVideo(userID int, userRole string, videoID int) error {
@@ -181,12 +246,51 @@ func (uc *Usecase) CategoryExists(categoryName *string) error {
 }
 
 func (uc *Usecase) SearchVideosByTitle(title string) ([]domain.Video, error) {
+	return uc.SearchVideosByTitleForUser(nil, title)
+}
+
+func (uc *Usecase) SearchVideosByTitleForUser(userID *int, title string) ([]domain.Video, error) {
 	title = strings.TrimSpace(title)
 	if title == "" {
 		return uc.repository.GetRecommendedVideos()
 	}
 
+	if userID != nil {
+		if *userID <= 0 {
+			return nil, errs.ErrInvalidFieldValue
+		}
+		if err := uc.repository.SaveVideoSearchHistory(domain.VideoSearchHistory{
+			UserID: *userID,
+			Query:  title,
+		}); err != nil {
+			return nil, err
+		}
+	}
+
 	return uc.repository.SearchVideosByTitle(title)
+}
+
+func (uc *Usecase) SaveVideoWatchProgress(userID int, videoID int, watchedSeconds int, durationSeconds int) (domain.VideoWatchHistory, error) {
+	if userID <= 0 || videoID <= 0 || watchedSeconds < 0 || durationSeconds <= 0 {
+		return domain.VideoWatchHistory{}, errs.ErrInvalidFieldValue
+	}
+
+	if _, err := uc.repository.GetVideoByID(videoID); err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return domain.VideoWatchHistory{}, errs.ErrVideoNotFound
+		}
+		return domain.VideoWatchHistory{}, err
+	}
+
+	watchedPercent := calculateWatchedPercent(watchedSeconds, durationSeconds)
+	return uc.repository.SaveVideoWatchProgress(domain.VideoWatchHistory{
+		UserID:          userID,
+		VideoID:         videoID,
+		WatchedSeconds:  watchedSeconds,
+		DurationSeconds: durationSeconds,
+		WatchedPercent:  watchedPercent,
+		IsCompleted:     watchedPercent > 80,
+	})
 }
 
 func (uc *Usecase) GenerateVideoQualities(userID int, userRole string, videoID int, inputPath string, outputDir string, outputURLPrefix string) ([]domain.VideoQuality, error) {

@@ -1,9 +1,11 @@
 package httpdelivery
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
 	"github.com/Nonameipal/AnalogYouTube/internal/errs"
@@ -48,6 +50,7 @@ func (h *Handler) CreateVideo(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	description := r.FormValue("description")
 	categoryName := r.FormValue("category_name")
+	tagNames := parseTagNames(r.FormValue("tags"))
 
 	videoURL, err := h.saveMultipartFile(r, "video", "videos/originals", true)
 	if err != nil {
@@ -73,6 +76,7 @@ func (h *Handler) CreateVideo(w http.ResponseWriter, r *http.Request) {
 		VideoURL:     videoURL,
 		ThumbnailURL: thumbnailURL,
 		CategoryName: categoryNamePointer,
+		Tags:         tagsFromNames(tagNames),
 	})
 	if err != nil {
 		h.cleanupFailedVideoUpload(0, "", 0, "", videoURL, thumbnailURL)
@@ -126,8 +130,9 @@ func (h *Handler) GetAllVideos(w http.ResponseWriter, r *http.Request) {
 // @Router /api/videos/search [get]
 func (h *Handler) SearchVideosByTitle(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Query().Get("title")
+	userID := h.optionalUserIDFromRequest(r)
 
-	videos, err := h.service.SearchVideosByTitle(title)
+	videos, err := h.service.SearchVideosByTitleForUser(userID, title)
 	if err != nil {
 		h.handleError(w, err)
 		return
@@ -144,7 +149,35 @@ func (h *Handler) SearchVideosByTitle(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} domain.Video
 // @Router /api/videos [get]
 func (h *Handler) GetRecommendedVideos(w http.ResponseWriter, r *http.Request) {
-	videos, err := h.service.GetRecommendedVideos()
+	userID := h.optionalUserIDFromRequest(r)
+	if userID == nil {
+		videos, err := h.service.GetRecommendedVideos()
+		if err != nil {
+			h.handleError(w, err)
+			return
+		}
+
+		writeJSON(w, http.StatusOK, videos)
+		return
+	}
+
+	videos, err := h.service.GetPersonalizedRecommendedVideos(*userID)
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, videos)
+}
+
+func (h *Handler) GetPersonalizedRecommendedVideos(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		h.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	videos, err := h.service.GetPersonalizedRecommendedVideos(userID)
 	if err != nil {
 		h.handleError(w, err)
 		return
@@ -228,6 +261,7 @@ func (h *Handler) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	description := r.FormValue("description")
 	categoryName := r.FormValue("category_name")
+	tagNames, tagsProvided := tagNamesFromMultipartForm(r, "tags")
 
 	thumbnailURL, err := h.saveMultipartFile(r, "thumbnail", "thumbnails", false)
 	if err != nil {
@@ -240,13 +274,17 @@ func (h *Handler) UpdateVideo(w http.ResponseWriter, r *http.Request) {
 		categoryNamePointer = &categoryName
 	}
 
-	video, err := h.service.UpdateVideo(userID, userRole, domain.Video{
+	video := domain.Video{
 		ID:           videoID,
 		Title:        title,
 		Description:  description,
 		ThumbnailURL: thumbnailURL,
 		CategoryName: categoryNamePointer,
-	})
+	}
+	if tagsProvided {
+		video.Tags = tagsFromNames(tagNames)
+	}
+	video, err = h.service.UpdateVideo(userID, userRole, video)
 	if err != nil {
 		if thumbnailURL != "" {
 			h.cleanupFailedVideoUpload(0, "", 0, "", thumbnailURL)
@@ -399,4 +437,143 @@ func (h *Handler) GetPlaybackSpeeds(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string][]float64{
 		"speeds": speeds,
 	})
+}
+
+type watchProgressRequest struct {
+	WatchedSeconds  int `json:"watched_seconds"`
+	DurationSeconds int `json:"duration_seconds"`
+}
+
+type updateVideoTagsRequest struct {
+	Tags []string `json:"tags"`
+}
+
+func (h *Handler) SaveVideoWatchProgress(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		h.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	videoID, err := getIDFromRequest(r, "id")
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	var request watchProgressRequest
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		h.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+
+	progress, err := h.service.SaveVideoWatchProgress(userID, videoID, request.WatchedSeconds, request.DurationSeconds)
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, progress)
+}
+
+func (h *Handler) GetAllTags(w http.ResponseWriter, r *http.Request) {
+	tags, err := h.service.GetAllTags()
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, tags)
+}
+
+func (h *Handler) GetVideoTags(w http.ResponseWriter, r *http.Request) {
+	videoID, err := getIDFromRequest(r, "id")
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	tags, err := h.service.GetVideoTags(videoID)
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, tags)
+}
+
+func (h *Handler) UpdateVideoTags(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserIDFromContext(r)
+	if !ok {
+		h.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	userRole, ok := getUserRoleFromContext(r)
+	if !ok {
+		h.handleError(w, errs.ErrInvalidToken)
+		return
+	}
+
+	videoID, err := getIDFromRequest(r, "id")
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	var request updateVideoTagsRequest
+	if err = json.NewDecoder(r.Body).Decode(&request); err != nil {
+		h.handleError(w, errs.ErrInvalidRequestBody)
+		return
+	}
+
+	tags, err := h.service.UpdateVideoTags(userID, userRole, videoID, request.Tags)
+	if err != nil {
+		h.handleError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, tags)
+}
+
+func tagNamesFromMultipartForm(r *http.Request, fieldName string) ([]string, bool) {
+	if r.MultipartForm == nil {
+		return nil, false
+	}
+
+	values, ok := r.MultipartForm.Value[fieldName]
+	if !ok {
+		return nil, false
+	}
+
+	return parseTagNames(strings.Join(values, ",")), true
+}
+
+func parseTagNames(value string) []string {
+	if strings.TrimSpace(value) == "" {
+		return []string{}
+	}
+
+	parts := strings.Split(value, ",")
+	tags := make([]string, 0, len(parts))
+	for _, part := range parts {
+		if tag := strings.TrimSpace(part); tag != "" {
+			tags = append(tags, tag)
+		}
+	}
+
+	return tags
+}
+
+func tagsFromNames(names []string) []domain.Tag {
+	if names == nil {
+		return nil
+	}
+
+	tags := make([]domain.Tag, 0, len(names))
+	for _, name := range names {
+		tags = append(tags, domain.Tag{Name: name})
+	}
+
+	return tags
 }
