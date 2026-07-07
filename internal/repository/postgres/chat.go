@@ -79,9 +79,6 @@ func (r *Repository) CreateChatRequest(request domain.ChatRequest) (domain.ChatR
 	err := r.db.QueryRow(ctx,
 		`INSERT INTO chat_requests (sender_id, receiver_id, status)
 		VALUES ($1, $2, $3)
-		ON CONFLICT (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id))
-		WHERE status = 'pending'
-		DO UPDATE SET updated_at = chat_requests.updated_at
 		RETURNING id, sender_id, receiver_id, status, chat_id, created_at, updated_at`,
 		request.SenderID,
 		request.ReceiverID,

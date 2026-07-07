@@ -83,13 +83,15 @@ func (r *Repository) UpdateUserProfile(user domain.User) (domain.User, error) {
 		    email = NULLIF($2, ''),
 		    avatar_url = NULLIF($3, ''),
 		    description = NULLIF($4, ''),
+		    password = $5,
 		    updated_at = CURRENT_TIMESTAMP
-		WHERE id = $5
+		WHERE id = $6
 		RETURNING id, username, email, password, role, avatar_url, description, created_at, updated_at`,
 		user.Username,
 		user.Email,
 		user.AvatarURL,
 		user.Description,
+		user.Password,
 		user.ID,
 	).Scan(
 		&dbUser.ID, &dbUser.Username, &dbUser.Email, &dbUser.Password, &dbUser.Role,

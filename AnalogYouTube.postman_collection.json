@@ -228,6 +228,11 @@
                                                                                         "type":  "text"
                                                                                     },
                                                                                     {
+                                                                                        "key":  "password",
+                                                                                        "value":  "newpassword123",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
                                                                                         "key":  "avatar",
                                                                                         "type":  "file",
                                                                                         "src":  ""

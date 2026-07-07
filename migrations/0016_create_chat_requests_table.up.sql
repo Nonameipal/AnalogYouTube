@@ -13,10 +13,6 @@ CREATE TABLE IF NOT EXISTS chat_requests (
     CHECK (status IN ('pending', 'accepted', 'rejected'))
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_chat_requests_unique_pending_pair
-ON chat_requests (LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id))
-WHERE status = 'pending';
-
 CREATE INDEX IF NOT EXISTS idx_chat_requests_sender_id ON chat_requests(sender_id);
 CREATE INDEX IF NOT EXISTS idx_chat_requests_receiver_id ON chat_requests(receiver_id);
 CREATE INDEX IF NOT EXISTS idx_chat_requests_status ON chat_requests(status);

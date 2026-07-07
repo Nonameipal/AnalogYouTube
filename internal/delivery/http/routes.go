@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/configs"
-	appLogger "github.com/Nonameipal/AnalogYouTube/internal/logger"
+	"github.com/Nonameipal/AnalogYouTube/internal/logger"
 	"github.com/gorilla/mux"
 )
 
@@ -104,7 +104,7 @@ func (h *Handler) InitRoutes() error {
 	r.HandleFunc("/ws/chats/{id}", h.ChatWebSocket).Methods(http.MethodGet)
 
 	addr := fmt.Sprintf(":%s", configs.AppSettings.AppParams.PortRun)
-	appLogger.GetLogger().Info().Str("addr", addr).Msg("server started")
+	logger.GetLogger().Info().Str("addr", addr).Msg("server started")
 
 	return http.ListenAndServe(addr, r)
 }

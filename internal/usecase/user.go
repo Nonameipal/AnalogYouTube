@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"net/mail"
 	"strings"
 
 	"github.com/Nonameipal/AnalogYouTube/internal/domain"
@@ -18,7 +19,13 @@ func (uc *Usecase) CreateUser(user domain.User) error {
 		return errs.ErrInvalidFieldValue
 	}
 
-	_, err := uc.repository.GetUserByUsername(user.Username)
+	normalizedEmail, err := normalizeEmail(user.Email)
+	if err != nil {
+		return err
+	}
+	user.Email = normalizedEmail
+
+	_, err = uc.repository.GetUserByUsername(user.Username)
 	if err != nil {
 		if !errors.Is(err, errs.ErrNotFound) {
 			return err
@@ -91,12 +98,19 @@ func (uc *Usecase) GetUserByID(id int) (domain.User, error) {
 func (uc *Usecase) UpdateUserProfile(userID int, user domain.User) (domain.User, error) {
 	user.Username = strings.TrimSpace(user.Username)
 	user.Email = strings.TrimSpace(user.Email)
+	user.Password = strings.TrimSpace(user.Password)
 	user.AvatarURL = strings.TrimSpace(user.AvatarURL)
 	user.Description = strings.TrimSpace(user.Description)
 
 	if userID <= 0 || user.Username == "" {
 		return domain.User{}, errs.ErrInvalidFieldValue
 	}
+
+	normalizedEmail, err := normalizeEmail(user.Email)
+	if err != nil {
+		return domain.User{}, err
+	}
+	user.Email = normalizedEmail
 
 	oldUser, err := uc.GetUserByID(userID)
 	if err != nil {
@@ -126,6 +140,15 @@ func (uc *Usecase) UpdateUserProfile(userID int, user domain.User) (domain.User,
 	user.ID = userID
 	if user.AvatarURL == "" {
 		user.AvatarURL = oldUser.AvatarURL
+	}
+	if user.Password == "" {
+		user.Password = oldUser.Password
+	} else {
+		hashedPassword, err := utils.GenerateHash(user.Password)
+		if err != nil {
+			return domain.User{}, err
+		}
+		user.Password = hashedPassword
 	}
 
 	return uc.repository.UpdateUserProfile(user)
@@ -186,4 +209,61 @@ func (uc *Usecase) GetUserProfile(userID int, viewerID *int) (domain.UserProfile
 	}
 
 	return profile, nil
+}
+
+func normalizeEmail(email string) (string, error) {
+	email = strings.ToLower(strings.TrimSpace(email))
+	if email == "" {
+		return "", nil
+	}
+	if strings.ContainsAny(email, " \t\r\n") {
+		return "", errs.ErrInvalidEmail
+	}
+
+	address, err := mail.ParseAddress(email)
+	if err != nil || address.Address != email {
+		return "", errs.ErrInvalidEmail
+	}
+
+	localPart, domainPart, ok := strings.Cut(email, "@")
+	if !ok || localPart == "" || domainPart == "" || strings.Count(email, "@") != 1 {
+		return "", errs.ErrInvalidEmail
+	}
+	if !isValidEmailDomain(domainPart) {
+		return "", errs.ErrInvalidEmail
+	}
+
+	return email, nil
+}
+
+func isValidEmailDomain(domain string) bool {
+	labels := strings.Split(domain, ".")
+	if len(labels) < 2 {
+		return false
+	}
+
+	for _, label := range labels {
+		if label == "" || strings.HasPrefix(label, "-") || strings.HasSuffix(label, "-") {
+			return false
+		}
+		for _, char := range label {
+			isLetter := char >= 'a' && char <= 'z'
+			isDigit := char >= '0' && char <= '9'
+			if !isLetter && !isDigit && char != '-' {
+				return false
+			}
+		}
+	}
+
+	topLevelDomain := labels[len(labels)-1]
+	if len(topLevelDomain) < 2 {
+		return false
+	}
+	for _, char := range topLevelDomain {
+		if char < 'a' || char > 'z' {
+			return false
+		}
+	}
+
+	return true
 }

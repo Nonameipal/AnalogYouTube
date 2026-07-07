@@ -34,6 +34,7 @@ func (h *Handler) handleError(w http.ResponseWriter, err error) {
 		writeJSON(w, http.StatusNotFound, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrInvalidRequestBody) ||
 		errors.Is(err, errs.ErrInvalidFieldValue) ||
+		errors.Is(err, errs.ErrInvalidEmail) ||
 		errors.Is(err, errs.ErrCannotSubscribeToYourself) ||
 		errors.Is(err, errs.ErrCannotDonateToYourself) ||
 		errors.Is(err, errs.ErrCannotCreateChatWithYourself) ||

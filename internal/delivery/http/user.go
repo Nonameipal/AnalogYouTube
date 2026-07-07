@@ -76,6 +76,7 @@ func (h *Handler) UpdateMe(w http.ResponseWriter, r *http.Request) {
 	user, err := h.service.UpdateUserProfile(userID, domain.User{
 		Username:    r.FormValue("username"),
 		Email:       r.FormValue("email"),
+		Password:    r.FormValue("password"),
 		AvatarURL:   avatarURL,
 		Description: r.FormValue("description"),
 	})

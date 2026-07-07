@@ -16,6 +16,7 @@ var (
 	ErrChatRequestAlreadyAnswered   = errors.New("chat request already answered")
 	ErrUsernameAlreadyExists        = errors.New("username already exists")
 	ErrEmailAlreadyExists           = errors.New("email already exists")
+	ErrInvalidEmail                 = errors.New("invalid email")
 	ErrIncorrectUsernameOrPassword  = errors.New("incorrect username or password")
 	ErrInvalidToken                 = errors.New("invalid token")
 	ErrAccessDenied                 = errors.New("access denied")
