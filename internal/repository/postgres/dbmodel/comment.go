@@ -10,6 +10,7 @@ type Comment struct {
 	ID        int       `db:"id"`
 	UserID    int       `db:"user_id"`
 	VideoID   int       `db:"video_id"`
+	ParentID  *int      `db:"parent_id"`
 	Text      string    `db:"text"`
 	Status    string    `db:"status"`
 	CreatedAt time.Time `db:"created_at"`
@@ -21,6 +22,7 @@ func (c Comment) ToDomain() domain.Comment {
 		ID:        c.ID,
 		UserID:    c.UserID,
 		VideoID:   c.VideoID,
+		ParentID:  c.ParentID,
 		Text:      c.Text,
 		Status:    c.Status,
 		CreatedAt: c.CreatedAt,

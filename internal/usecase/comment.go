@@ -19,6 +19,16 @@ func (uc *Usecase) CreateComment(userID int, videoID int, comment domain.Comment
 		return domain.Comment{}, err
 	}
 
+	if comment.ParentID != nil {
+		parent, err := uc.repository.GetCommentByID(*comment.ParentID)
+		if err != nil {
+			return domain.Comment{}, errs.ErrCommentNotFound
+		}
+		if parent.VideoID != videoID {
+			return domain.Comment{}, errs.ErrInvalidFieldValue
+		}
+	}
+
 	comment.UserID = userID
 	comment.VideoID = videoID
 	comment.Status = domain.CommentStatusActive

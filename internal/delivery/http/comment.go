@@ -12,13 +12,13 @@ import (
 
 // CreateComment godoc
 // @Summary Создать комментарий
-// @Description Добавляет комментарий к видео.
+// @Description Добавляет комментарий к видео. Для ответа на комментарий передайте parent_id.
 // @Tags Comments
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "ID видео"
-// @Param input body dto.CreateCommentRequest true "Текст комментария"
+// @Param input body dto.CreateCommentRequest true "Текст комментария. parent_id  необязательный, указывает ID родительского комментария"
 // @Success 201 {object} domain.Comment
 // @Failure 400 {object} CommonError
 // @Failure 401 {object} CommonError
@@ -42,7 +42,10 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment, err := h.service.CreateComment(userID, videoID, domain.Comment{Text: input.CommentText()})
+	comment, err := h.service.CreateComment(userID, videoID, domain.Comment{
+		Text:     input.CommentText(),
+		ParentID: input.ParentID,
+	})
 	if err != nil {
 		h.handleError(w, err)
 		return

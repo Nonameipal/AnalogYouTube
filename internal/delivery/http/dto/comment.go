@@ -1,8 +1,9 @@
 package dto
 
 type CreateCommentRequest struct {
-	Text    string `json:"text"`
-	Content string `json:"content"`
+	Text     string `json:"text"`
+	Content  string `json:"content"`
+	ParentID *int   `json:"parent_id,omitempty"`
 }
 
 type UpdateCommentRequest struct {

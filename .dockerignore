@@ -1,0 +1,13 @@
+
+server
+*.exe
+
+.env
+
+uploads/
+
+.gocache/
+
+
+coverage
+coverage.out
